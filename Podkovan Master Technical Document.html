@@ -1,0 +1,1701 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Podkovan Master Technical Document</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ── Design tokens ──────────────────────────────────────── */
+:root {
+  /* Layout: sticky sidebar nav + scrolling content area */
+  --bg:          #f7f6f4;
+  --bg-panel:    #ffffff;
+  --bg-nav:      #1a1a1a;
+  --fg:          #1a1a1a;
+  --fg-mid:      #4a4a4a;
+  --fg-dim:      #767676;
+  --accent:      #c8611a;
+  --accent-soft: #f5e8dc;
+  --border:      #e2e0dc;
+  --border-nav:  #2e2e2e;
+  --code-bg:     #f0ede9;
+  --code-fg:     #3a2a1a;
+  --tag-validate-bg: #fef3e2;
+  --tag-validate-fg: #92400e;
+  --tag-open-bg:     #fef2f2;
+  --tag-open-fg:     #991b1b;
+  --tag-tbd-bg:      #faf5ff;
+  --tag-tbd-fg:      #6b21a8;
+  --tag-confirmed-bg: #f0fdf4;
+  --tag-confirmed-fg: #166534;
+  --tag-no-bg:       #fff1f2;
+  --tag-no-fg:       #9f1239;
+  --success-bg:  #f0fdf4;
+  --success-fg:  #166534;
+  --warn-bg:     #fffbeb;
+  --warn-fg:     #92400e;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #111110;
+    --bg-panel:    #1c1c1a;
+    --bg-nav:      #0d0d0c;
+    --fg:          #e8e6e1;
+    --fg-mid:      #b0ae9e;
+    --fg-dim:      #767470;
+    --accent:      #e07a35;
+    --accent-soft: #2e1a0e;
+    --border:      #2e2d28;
+    --border-nav:  #222220;
+    --code-bg:     #232320;
+    --code-fg:     #d4c8b0;
+    --tag-validate-bg: #2e1f0a;
+    --tag-validate-fg: #fbbf24;
+    --tag-open-bg:     #2d0f0f;
+    --tag-open-fg:     #fca5a5;
+    --tag-tbd-bg:      #1d1030;
+    --tag-tbd-fg:      #c4b5fd;
+    --tag-confirmed-bg: #0f2318;
+    --tag-confirmed-fg: #86efac;
+    --tag-no-bg:       #2d0a10;
+    --tag-no-fg:       #fda4af;
+    --success-bg:  #0f2318;
+    --success-fg:  #86efac;
+    --warn-bg:     #2a1f0a;
+    --warn-fg:     #fde68a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:          #111110;
+  --bg-panel:    #1c1c1a;
+  --bg-nav:      #0d0d0c;
+  --fg:          #e8e6e1;
+  --fg-mid:      #b0ae9e;
+  --fg-dim:      #767470;
+  --accent:      #e07a35;
+  --accent-soft: #2e1a0e;
+  --border:      #2e2d28;
+  --border-nav:  #222220;
+  --code-bg:     #232320;
+  --code-fg:     #d4c8b0;
+  --tag-validate-bg: #2e1f0a;
+  --tag-validate-fg: #fbbf24;
+  --tag-open-bg:     #2d0f0f;
+  --tag-open-fg:     #fca5a5;
+  --tag-tbd-bg:      #1d1030;
+  --tag-tbd-fg:      #c4b5fd;
+  --tag-confirmed-bg: #0f2318;
+  --tag-confirmed-fg: #86efac;
+  --tag-no-bg:       #2d0a10;
+  --tag-no-fg:       #fda4af;
+  --success-bg:  #0f2318;
+  --success-fg:  #86efac;
+  --warn-bg:     #2a1f0a;
+  --warn-fg:     #fde68a;
+  color-scheme: dark;
+}
+
+/* ── Reset & base ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  min-height: 100%;
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+}
+
+/* ── Layout shell ───────────────────────────────────────── */
+.shell {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+  position: relative;
+}
+
+/* ── Navigation sidebar ─────────────────────────────────── */
+#sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg-nav);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.nav-brand {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border-nav);
+  margin-bottom: 8px;
+}
+.nav-brand .wordmark {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.nav-brand .doc-name {
+  font-size: 12px;
+  color: #9a9890;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555450;
+  padding: 12px 20px 4px;
+}
+.nav-link {
+  display: block;
+  padding: 6px 20px;
+  font-size: 12px;
+  color: #9a9890;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.1s, background 0.1s;
+  border-left: 2px solid transparent;
+}
+.nav-link:hover { color: #d4d2cc; background: rgba(255,255,255,0.03); }
+.nav-link.active { color: #fff; border-left-color: var(--accent); background: rgba(255,255,255,0.05); }
+.nav-link.sub { padding-left: 32px; font-size: 11px; }
+.nav-footer {
+  margin-top: auto;
+  padding: 16px 20px 0;
+  border-top: 1px solid var(--border-nav);
+}
+.nav-footer button {
+  background: none;
+  border: 1px solid var(--border-nav);
+  color: #767470;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.1s, border-color 0.1s;
+}
+.nav-footer button:hover { color: #d4d2cc; border-color: #555; }
+
+/* ── Content area ───────────────────────────────────────── */
+#content {
+  flex: 1;
+  min-width: 0;
+  padding: 48px max(24px, env(safe-area-inset-right, 0px)) 80px max(32px, env(safe-area-inset-left, 0px));
+  max-width: 860px;
+}
+
+/* ── Document header ────────────────────────────────────── */
+.doc-header {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+.doc-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 4px;
+  text-wrap: balance;
+}
+.doc-subtitle {
+  font-size: 13px;
+  color: var(--fg-mid);
+  margin: 0 0 20px;
+}
+.doc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 16px;
+}
+.doc-meta-item { font-size: 12px; color: var(--fg-dim); }
+.doc-meta-item strong { color: var(--fg-mid); font-weight: 500; }
+
+/* ── Changelog ──────────────────────────────────────────── */
+.changelog-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 40px;
+}
+.changelog-box h2 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+.changelog-note {
+  font-size: 11px;
+  color: var(--fg-dim);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ── Section headings ───────────────────────────────────── */
+.part-header {
+  margin-top: 56px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--accent);
+}
+.part-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.part-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 32px 0 10px;
+  color: var(--fg);
+  text-wrap: balance;
+}
+h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--fg-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-wrap: balance;
+}
+
+/* ── Tables ─────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  min-width: 480px;
+}
+thead th {
+  background: var(--code-bg);
+  color: var(--fg-mid);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--fg-mid);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--code-bg); }
+td:first-child { color: var(--fg); font-weight: 500; }
+
+/* ── Code blocks ────────────────────────────────────────── */
+.code-wrap { overflow-x: auto; margin: 14px 0; border-radius: 6px; }
+pre {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 16px 20px;
+  margin: 0;
+  white-space: pre;
+  border-radius: 6px;
+}
+code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 11.5px;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* ── Inline tags ────────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.tag-validate  { background: var(--tag-validate-bg);  color: var(--tag-validate-fg); }
+.tag-open      { background: var(--tag-open-bg);      color: var(--tag-open-fg); }
+.tag-tbd       { background: var(--tag-tbd-bg);       color: var(--tag-tbd-fg); }
+.tag-rule      { background: var(--accent-soft);       color: var(--accent); }
+.tag-confirmed { background: var(--tag-confirmed-bg); color: var(--tag-confirmed-fg); }
+.tag-no        { background: var(--tag-no-bg);        color: var(--tag-no-fg); }
+
+/* ── Info boxes ─────────────────────────────────────────── */
+.box {
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.box-warn  { background: var(--warn-bg);    color: var(--warn-fg);    border-left: 3px solid #d97706; }
+.box-info  { background: var(--accent-soft); color: var(--accent);    border-left: 3px solid var(--accent); }
+.box-rule  { background: var(--code-bg);    color: var(--fg);         border-left: 3px solid var(--accent); }
+.box p { margin: 0; }
+.box p + p { margin-top: 6px; }
+.box strong { font-weight: 600; }
+
+/* ── Workflow card ──────────────────────────────────────── */
+.wf-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 20px 0;
+  overflow: hidden;
+}
+.wf-card-head {
+  background: var(--code-bg);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.wf-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.wf-name { font-size: 13px; font-weight: 600; color: var(--fg); }
+.wf-trigger { font-size: 11px; color: var(--fg-dim); margin-left: auto; }
+.wf-card-body { padding: 14px 16px; }
+
+/* ── Claude prompt box ──────────────────────────────────── */
+.prompt-wrap {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+.prompt-head {
+  background: var(--code-bg);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.prompt-head-label { font-size: 12px; font-weight: 600; color: var(--fg-mid); }
+.copy-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: opacity 0.15s;
+}
+.copy-btn:hover { opacity: 0.85; }
+.copy-btn.copied { background: #16a34a; }
+.prompt-body {
+  padding: 16px;
+  max-height: 360px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--code-fg);
+  white-space: pre-wrap;
+}
+
+/* ── Step list ──────────────────────────────────────────── */
+.steps { margin: 10px 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li {
+  counter-increment: step;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--fg-mid);
+  align-items: flex-start;
+}
+.steps li::before {
+  content: counter(step);
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.steps li strong { color: var(--fg); }
+
+/* ── Rules list ─────────────────────────────────────────── */
+.rules { margin: 10px 0; padding: 0; list-style: none; }
+.rules li {
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  margin-bottom: 8px;
+  border-radius: 0 4px 4px 0;
+  font-size: 13px;
+  color: var(--fg-mid);
+}
+.rules li strong { color: var(--fg); display: block; font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+
+/* ── Normal prose ───────────────────────────────────────── */
+p { margin: 10px 0; font-size: 13.5px; color: var(--fg-mid); max-width: 72ch; }
+ul, ol { margin: 10px 0; padding-left: 20px; }
+li { margin-bottom: 4px; font-size: 13px; color: var(--fg-mid); }
+li strong { color: var(--fg); }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+/* ── Mobile nav toggle ──────────────────────────────────── */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  width: 48px;
+  height: 48px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  align-items: center;
+  justify-content: center;
+}
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 90;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 720px) {
+  #sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    width: 240px;
+    height: 100%;
+    z-index: 95;
+    transition: left 0.25s ease;
+  }
+  #sidebar.open { left: 0; }
+  .nav-toggle { display: flex; }
+  .nav-overlay.open { display: block; }
+  #content { padding: 32px 16px 80px; }
+  .doc-title { font-size: 20px; }
+}
+</style>
+
+<div class="shell">
+  <!-- Sidebar nav -->
+  <nav id="sidebar">
+    <div class="nav-brand">
+      <div class="wordmark">Podkováň UK</div>
+      <div class="doc-name">Master Technical Document<br>Phase 1 · Single Source of Truth</div>
+    </div>
+
+    <span class="nav-section-label">Document</span>
+    <a class="nav-link" data-section="changelog" href="#changelog">Changelog</a>
+    <a class="nav-link" data-section="usage" href="#usage">How to Use</a>
+
+    <span class="nav-section-label">Architecture</span>
+    <a class="nav-link" data-section="p1" href="#p1">Part 1 — Context</a>
+    <a class="nav-link sub" data-section="p1" href="#p1-arch">System Map</a>
+    <a class="nav-link sub" data-section="p1" href="#p1-rules">Architecture Rules</a>
+    <a class="nav-link sub" data-section="p1" href="#p1-milestones">Milestones</a>
+
+    <span class="nav-section-label">Automation (A)</span>
+    <a class="nav-link" data-section="p2" href="#p2">Part 2 — Universal Rules</a>
+    <a class="nav-link" data-section="p3" href="#p3">Part 3 — Airtable Schema</a>
+    <a class="nav-link" data-section="p4" href="#p4">Part 4 — Workflows</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-error">Error Handler</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-onboarding">Onboarding</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-matching">Customer Matching</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-flow-a">Flow A — Credit Terms</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-flow-b">Flow B — Pay-in-Advance</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-flow-c">Flow C — Shopify</a>
+    <a class="nav-link sub" data-section="p4" href="#wf-depot">Depot Flows</a>
+    <a class="nav-link" data-section="p5" href="#p5">Part 5 — Claude Build Prompt</a>
+
+    <span class="nav-section-label">Shopify (B)</span>
+    <a class="nav-link" data-section="p6" href="#p6">Part 6 — Shopify Workstream</a>
+
+    <span class="nav-section-label">Validation</span>
+    <a class="nav-link" data-section="p7" href="#p7">Part 7 — Discovery Checklist</a>
+    <a class="nav-link" data-section="p8" href="#p8">Part 8 — Open Questions</a>
+    <a class="nav-link" data-section="p9" href="#p9">Part 9 — Milestone Checklist</a>
+    <a class="nav-link" data-section="p10" href="#p10">Part 10 — Security</a>
+
+    <div class="nav-footer">
+      <button id="theme-toggle">Toggle theme</button>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main id="content">
+
+    <!-- Header -->
+    <header class="doc-header">
+      <div class="doc-title">Podkovan UK — Master Technical Document</div>
+      <div class="doc-subtitle">Phase 1 · Single Source of Truth</div>
+      <div class="doc-meta">
+        <span class="doc-meta-item"><strong>Project</strong> Podkovan UK Integration &amp; Trade Store</span>
+        <span class="doc-meta-item"><strong>Agency</strong> LN Webworks</span>
+        <span class="doc-meta-item"><strong>Client</strong> Chris (Podkovan UK)</span>
+        <span class="doc-meta-item"><strong>Version</strong> 1.2</span>
+        <span class="doc-meta-item"><strong>Last updated</strong> November 2026</span>
+      </div>
+    </header>
+
+    <!-- Changelog -->
+    <section id="changelog">
+      <div class="changelog-box">
+        <h2>Changelog</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Version</th><th>Date</th><th>Author</th><th>What Changed</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>1.2</td>
+                <td>05 Nov 2026</td>
+                <td>LN Webworks</td>
+                <td>Four updates in this version: (1) All Mailchimp references replaced with Brevo throughout — Systems in Scope table, ASCII system map, Field Ownership table, and Workstream B out-of-scope list. (2) WF-A1-SAMPLE-REQUEST workflow spec added (Part 4) — 9-step workflow covering Turnstile validation, Brevo opt-in capture and Airtable storage, Google Drive PDF upload, admin notification, and applicant confirmation email. (3) Explicit scope note added to Workstream B out-of-scope: Brevo–Breww campaign sync is NOT Phase 1. The only Brevo touchpoint in Phase 1 is the opt-in checkbox on the sample/lead request form. Full Brevo–Breww contact and campaign sync is a next-stage item. (4) Part 9 — Milestone Deliverables Checklist added, covering all eight milestones (A1–A5, B1–B3) with per-milestone deliverables, status tags, and open questions requiring Chris confirmation. Security section renumbered to Part 10.</td>
+              </tr>
+              <tr>
+                <td>1.1</td>
+                <td>05 Nov 2026</td>
+                <td>LN Webworks</td>
+                <td>Updated with confirmed decisions from full Trello project thread review. Key updates: (1) Breww sandbox API findings recorded — confirmed working: block_order_processing, customer search by email/VAT, order filter last_modified_at__gte; confirmed NOT available: custom fields write (Connor at Breww confirmed read-only), customer last-modified filter, file attachments via API. (2) Discovery Checklist updated — confirmed items marked Confirmed, unvalidated items remain Validate. (3) Open Questions updated — Xero account 406 for Shopify processing fees confirmed by accountant; clearing account logic confirmed. (4) Flow B and Flow A descriptions clarified with accountant-confirmed invoice timing rules. (5) n8n hosted on DigitalOcean UK added to infrastructure context. (6) Consent ID format CONSENT-YYYY-XXXX and 30-char limit confirmed by Chris. (7) Google Drive shared drive "Podkováň — Compliance Records" folder structure confirmed.</td>
+              </tr>
+              <tr>
+                <td>1.0</td>
+                <td>05 Nov 2026</td>
+                <td>LN Webworks</td>
+                <td>Initial document created. Merged Automation Spec v1.0 and Shopify Spec v1.0 into single master. Added n8n build layer, error handling detail, logging schema, and developer Claude prompt.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="changelog-note">Every future change to requirements, architecture decisions, or implementation choices must be logged here before the relevant section is updated. Do not edit the document body without adding a changelog entry.</p>
+      </div>
+    </section>
+
+    <!-- How to Use -->
+    <section id="usage">
+      <h3>How to Use This Document</h3>
+      <p>This is the only technical document for Podkovan Phase 1. It has four audiences:</p>
+      <ul>
+        <li><strong>LN Webworks technical lead</strong> — read the whole document. You own the changelog and final architecture decisions.</li>
+        <li><strong>Developer (Workstream A — Automation)</strong> — read Parts 1, 2, 3, and 4. Part 5 has your Claude build prompt.</li>
+        <li><strong>Developer (Workstream B — Shopify)</strong> — read Parts 1 and 6. Part 5 has your Claude build prompt.</li>
+        <li><strong>Claude (AI doing the build)</strong> — your developer will paste the relevant sections directly into your prompt. Do not use any knowledge outside what this document gives you.</li>
+      </ul>
+    </section>
+
+    <!-- Part 1 -->
+    <section id="p1">
+      <div class="part-header">
+        <div class="part-label">Part 1</div>
+        <h2 class="part-title">Project Context and Architecture</h2>
+      </div>
+
+      <h3>1.1 What We Are Building</h3>
+      <p><strong>Workstream A — Automation (190 hrs):</strong> n8n automation layer connecting Breww, Xero, Shopify, and Depot operations. Covers customer onboarding, invoice flows, depot notifications, loop prevention, error handling, and an Airtable operational dashboard.</p>
+      <p><strong>Workstream B — Shopify (76 hrs):</strong> B2B-only trade store on Shopify Grow plan. Pre-approved trade customers only. Feeds directly into Workstream A for invoicing and depot notification.</p>
+
+      <h3>1.2 Systems in Scope</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>System</th><th>Role</th><th>Owns</th></tr></thead>
+          <tbody>
+            <tr><td>Breww</td><td>Operational platform</td><td>Customers, orders, dispatch, billing, payment type</td></tr>
+            <tr><td>n8n</td><td>Automation and orchestration</td><td>Nothing — it moves data between systems</td></tr>
+            <tr><td>Airtable</td><td>Integration state and visibility</td><td>ID mappings, sync hashes, review queue, depot status, errors</td></tr>
+            <tr><td>Xero</td><td>Accounting</td><td>Invoices, reminders, payments</td></tr>
+            <tr><td>Shopify</td><td>B2B trade store (Workstream B)</td><td>Nothing — Breww owns the customer</td></tr>
+            <tr><td>Sellar</td><td>B2B order channel (already live)</td><td>Nothing — orders pass into Breww natively</td></tr>
+            <tr><td>Brevo</td><td>Marketing emails</td><td>Marketing opt-in — connected to Breww natively, not built by us</td></tr>
+            <tr><td>Google Drive</td><td>Compliance document storage</td><td>Consent PDFs, T&amp;Cs</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="p1-arch">1.3 System Map</h3>
+      <div class="code-wrap"><pre>┌─────────────┐    native     ┌─────────────┐
+│   Shopify   │──────────────▶│             │
+│ (trade B2B) │               │    Breww    │
+└─────────────┘               │             │
+                               │ (operations)│
+┌─────────────┐    native     │             │
+│   Sellar    │──────────────▶│             │
+│ (B2B live)  │               └──────┬──────┘
+└─────────────┘                      │
+                                      │ polling / API
+                               ┌──────▼──────┐       ┌─────────────┐
+                               │             │◀─────▶│  Airtable   │
+                               │     n8n     │       │ (state +    │
+                               │             │       │ dashboard)  │
+                               └──────┬──────┘       └─────────────┘
+                                      │
+                               ┌──────▼──────┐
+                               │    Xero     │
+                               │ (invoices + │
+                               │  payments)  │
+                               └─────────────┘
+
+n8n ──▶ Depot (email)
+Depot ──▶ n8n (one-click webhook)
+
+Breww ◀──▶ Brevo (native — not managed by us)
+n8n ──▶ Google Drive (consent PDFs)
+n8n ──▶ Gmail (outbound emails via integrations@podkovan.com)</pre></div>
+
+      <h3 id="p1-rules">1.4 Critical Architecture Rules — Never Violate</h3>
+      <ul class="rules">
+        <li><strong>Rule 1 — Breww native Xero integration is DEACTIVATED.</strong>n8n creates all invoices via the Xero API directly. The native integration has been deliberately turned off to prevent duplicate invoices. It must stay deactivated.</li>
+        <li><strong>Rule 2 — Airtable is state, not pipeline.</strong>Airtable sits alongside n8n. n8n reads and writes Airtable for state tracking. Data does not flow through Airtable from one system to another. Correct: <code>Breww → n8n → Xero</code> with n8n reading/writing Airtable for state. Wrong: <code>Breww → Airtable → Xero</code>.</li>
+        <li><strong>Rule 3 — Breww is the single source of truth for customer data.</strong>No other system overwrites Breww customer fields. Shopify details never overwrite Breww records. Sellar data never overwrites Breww records.</li>
+        <li><strong>Rule 4 — Every workflow must implement loop prevention, idempotency, and retry.</strong>See Part 2 for the exact pattern. No exceptions.</li>
+        <li><strong>Rule 5 — Never auto-create or auto-link a customer without confirmed match or human approval.</strong>Near/uncertain matches go to Airtable Review Queue. Humans decide. n8n acts on the decision.</li>
+        <li><strong>Rule 6 — Breww custom fields are READ ONLY via API.</strong>You cannot write to Breww custom fields through the API (confirmed by Connor at Breww, Nov 2026 — existing feature request with Breww). Do not build any workflow that depends on writing to a custom field. Use the Breww Reference field (max 30 chars) for Consent ID storage, and use Airtable for all other integration state.</li>
+        <li><strong>Rule 7 — Do not write VAT invoices from anywhere other than Xero.</strong>Gmail sends payment requests (Flow B) and order summaries only. These emails must be explicitly labelled "This is a payment request, not a VAT invoice." Xero is the only system that sends VAT invoices to customers.</li>
+      </ul>
+
+      <h3>1.5 Infrastructure</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>n8n hosting</td><td>DigitalOcean, UK region — self-hosted n8n instance</td></tr>
+            <tr><td>Credential storage</td><td>n8n encrypted credential store only</td></tr>
+            <tr><td>Outbound email</td><td>Gmail via integrations@podkovan.com</td></tr>
+            <tr><td>Email sender name</td><td>Podkováň UK</td></tr>
+            <tr><td>Email reply-to</td><td>Admin team inbox (so customer replies reach a real person)</td></tr>
+            <tr><td>Compliance storage</td><td>Google Drive — "Podkováň — Compliance Records" shared drive</td></tr>
+            <tr><td>Compliance folders</td><td>Trade Account Agreements / T&amp;Cs / Sample Requests</td></tr>
+            <tr><td>Consent document retention</td><td>Permanently, or customer relationship + 6 years</td></tr>
+            <tr><td>2FA</td><td>Enabled on integrations@podkovan.com via Google Authenticator</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="p1-milestones">1.6 Milestone Summary</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Name</th><th>Weeks</th><th>Hours</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>A1</td><td>Foundation</td><td>1–2</td><td>36</td><td>$1,080</td></tr>
+            <tr><td>A2</td><td>Invoice Flows</td><td>3–4</td><td>52</td><td>$1,560</td></tr>
+            <tr><td>A3</td><td>Customer Matching</td><td>5–6</td><td>30</td><td>$900</td></tr>
+            <tr><td>A4</td><td>Operations</td><td>7–8</td><td>44</td><td>$1,320</td></tr>
+            <tr><td>A5</td><td>Quality and Sign-off</td><td>9–10</td><td>28</td><td>$840</td></tr>
+            <tr><td>B1</td><td>Store and Breww</td><td>1</td><td>30</td><td>$900</td></tr>
+            <tr><td>B2</td><td>Payments and Finance</td><td>2</td><td>26</td><td>$780</td></tr>
+            <tr><td>B3</td><td>Automation and Testing</td><td>3</td><td>20</td><td>$600</td></tr>
+            <tr><td><strong>Total</strong></td><td></td><td></td><td><strong>266</strong></td><td><strong>$7,980</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:12px;color:var(--fg-dim);">Rate: $30/hr, billed on actual hours.</p>
+    </section>
+
+    <!-- Part 2 -->
+    <section id="p2">
+      <div class="part-header">
+        <div class="part-label">Part 2</div>
+        <h2 class="part-title">Universal Automation Rules</h2>
+      </div>
+
+      <div class="box box-warn"><p><strong>These five patterns apply to every n8n workflow. They are not optional. Claude must apply them to every workflow it builds.</strong></p></div>
+
+      <h3>2.1 Loop Prevention (Hash-Based Deduplication)</h3>
+      <p>Two-way sync must not bounce changes indefinitely. Use this pattern on every sync operation:</p>
+      <div class="code-wrap"><pre>Incoming event/payload arrives at n8n
+        ↓
+Extract only the fields n8n would write to the destination system
+        ↓
+Compute SHA-256 hash (canonicalize: sort keys alphabetically, lowercase string values)
+        ↓
+Read Airtable [Customer Sync or Invoice State] → Last Sync Hash for this record
+        ↓
+Compare hashes
+        ↓
+Same hash?  → STOP. Do not propagate. This was caused by our own last sync.
+        ↓
+Different hash? → Proceed
+        ↓
+Update destination system
+        ↓
+Write new hash to Airtable → Last Sync Hash
+Write timestamp to Airtable → Last Synced At</pre></div>
+      <div class="code-wrap"><pre>// SHA-256 hash — Function node (Node.js crypto)
+require('crypto').createHash('sha256').update(JSON.stringify(canonicalized)).digest('hex')</pre></div>
+
+      <h3>2.2 Idempotency</h3>
+      <p>Every write operation must produce the same result whether run once or ten times.</p>
+      <ol>
+        <li>Before creating any record (Breww customer, Xero invoice, Airtable row), check if it already exists using the stored ID in Airtable.</li>
+        <li>If it exists: skip creation, log "already exists", continue to the next step.</li>
+        <li>If it does not exist: create it, store the new ID in Airtable, continue.</li>
+      </ol>
+      <p><em>n8n: Airtable Search node → IF node: record found → skip; not found → create.</em></p>
+
+      <h3>2.3 Error Handling and Retry with Exponential Backoff</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attempt</th><th>Delay</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Immediate</td></tr>
+            <tr><td>2</td><td>30 seconds</td></tr>
+            <tr><td>3</td><td>2 minutes</td></tr>
+            <tr><td>4</td><td>10 minutes</td></tr>
+            <tr><td>After attempt 4</td><td>Write "Failed" to Airtable, send alert</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Use n8n's built-in Error Workflow pattern. Set <strong>Continue on Fail = ON</strong> on every HTTP Request node. After every HTTP Request, add an IF node checking for error. On error: call <code>WF-ERROR-HANDLER</code>.</p>
+
+      <h3>2.4 Airtable State Write Pattern</h3>
+      <div class="code-wrap"><pre>Before any external action  → write status "Processing" or "Pending"
+After success               → write status "Synced"/"Confirmed"/"Paid" + store IDs/hashes
+On failure                  → write status "Retrying" or "Failed" + log error details</pre></div>
+      <p>Never skip the pre-action write. If n8n crashes mid-operation, the pre-action status reveals where it stopped.</p>
+
+      <h3>2.5 Field Ownership</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Owner</th><th>n8n writes here?</th></tr></thead>
+          <tbody>
+            <tr><td>Customer trading name</td><td>Breww</td><td>No — read only</td></tr>
+            <tr><td>Customer address</td><td>Breww</td><td>No — read only</td></tr>
+            <tr><td>Customer VAT number</td><td>Breww</td><td>No — read only</td></tr>
+            <tr><td>Customer payment terms</td><td>Breww</td><td>No — read only</td></tr>
+            <tr><td>Order details and line items</td><td>Breww</td><td>No — read only</td></tr>
+            <tr><td>Dispatch status</td><td>Breww</td><td>Only to record confirmation (validate capability)</td></tr>
+            <tr><td>Invoice details</td><td>Xero</td><td>Yes — n8n creates invoices</td></tr>
+            <tr><td>Payment status</td><td>Xero</td><td>Yes — n8n allocates payments</td></tr>
+            <tr><td>Marketing opt-in</td><td>Brevo</td><td>No — Breww native connection handles this</td></tr>
+            <tr><td>Integration state/hashes</td><td>Airtable</td><td>Yes — n8n is the only writer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Part 3 -->
+    <section id="p3">
+      <div class="part-header">
+        <div class="part-label">Part 3</div>
+        <h2 class="part-title">Airtable Schema</h2>
+      </div>
+
+      <p>Airtable base name: <strong>Podkovan Integration</strong></p>
+
+      <h3>3.1 Customer Sync</h3>
+      <p>Tracks every customer that has gone through the onboarding or matching process.</p>
+      <div class="table-wrap"><table><thead><tr><th>Field Name</th><th>Type</th><th>Values / Notes</th></tr></thead><tbody>
+        <tr><td>Name</td><td>Single line text</td><td>Customer trading name</td></tr>
+        <tr><td>Breww ID</td><td>Single line text</td><td>Breww internal customer ID</td></tr>
+        <tr><td>Shopify Company ID</td><td>Single line text</td><td>Shopify B2B company ID</td></tr>
+        <tr><td>Consent ID</td><td>Single line text</td><td>Format: CONSENT-YYYY-XXXX</td></tr>
+        <tr><td>Sync Status</td><td>Single select</td><td>Synced / Pending / Review Required / Rejected / Failed</td></tr>
+        <tr><td>Last Sync Hash</td><td>Single line text</td><td>SHA-256 hash of last synced payload</td></tr>
+        <tr><td>Last Synced At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Onboarding Approved At</td><td>Date and time</td><td>When admin clicked Approve</td></tr>
+        <tr><td>Approved By</td><td>Single line text</td><td>Name of approver</td></tr>
+        <tr><td>Notes</td><td>Long text</td><td>Manual notes only</td></tr>
+      </tbody></table></div>
+
+      <h3>3.2 Review Queue</h3>
+      <p>Holds uncertain customer matches and unmatched Shopify orders awaiting human decision.</p>
+      <div class="table-wrap"><table><thead><tr><th>Field Name</th><th>Type</th><th>Values / Notes</th></tr></thead><tbody>
+        <tr><td>Submission Name</td><td>Single line text</td><td>Name from onboarding form</td></tr>
+        <tr><td>Submission Email</td><td>Single line text</td><td></td></tr>
+        <tr><td>Submission VAT</td><td>Single line text</td><td></td></tr>
+        <tr><td>Submission Postcode</td><td>Single line text</td><td></td></tr>
+        <tr><td>Submission Phone</td><td>Single line text</td><td></td></tr>
+        <tr><td>Candidate Breww IDs</td><td>Long text</td><td>Comma-separated list</td></tr>
+        <tr><td>Candidate Names</td><td>Long text</td><td>Human-readable display of candidates</td></tr>
+        <tr><td>Match Reason</td><td>Single line text</td><td>Why flagged: name match / postcode diff / multiple results</td></tr>
+        <tr><td>Review Type</td><td>Single select</td><td>Customer Match / Unmatched Shopify Order</td></tr>
+        <tr><td>Status</td><td>Single select</td><td>Awaiting Review / Link Existing / Create New / Rejected</td></tr>
+        <tr><td>Reviewed By</td><td>Single line text</td><td></td></tr>
+        <tr><td>Resolved At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Action Taken</td><td>Long text</td><td>What n8n did after resolution</td></tr>
+      </tbody></table></div>
+
+      <h3>3.3 Depot Status</h3>
+      <div class="table-wrap"><table><thead><tr><th>Field Name</th><th>Type</th><th>Values / Notes</th></tr></thead><tbody>
+        <tr><td>Order ID</td><td>Single line text</td><td>Breww order ID</td></tr>
+        <tr><td>Customer Name</td><td>Single line text</td><td></td></tr>
+        <tr><td>Depot</td><td>Single line text</td><td>Depot name (mapping TBD with Chris)</td></tr>
+        <tr><td>Email Sent At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Status</td><td>Single select</td><td>Pending / Awaiting Confirmation / Confirmed / Overdue / Escalated</td></tr>
+        <tr><td>Confirmation Token</td><td>Single line text</td><td>Cryptographically random token used in one-click link</td></tr>
+        <tr><td>Confirmed At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Escalated At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Escalated To</td><td>Single line text</td><td>TBD with Chris</td></tr>
+      </tbody></table></div>
+
+      <h3>3.4 Invoice State</h3>
+      <div class="table-wrap"><table><thead><tr><th>Field Name</th><th>Type</th><th>Values / Notes</th></tr></thead><tbody>
+        <tr><td>Order ID</td><td>Single line text</td><td>Breww order ID</td></tr>
+        <tr><td>Customer Name</td><td>Single line text</td><td></td></tr>
+        <tr><td>Flow</td><td>Single select</td><td>A: Credit Terms / B: Pay in Advance / C: Shopify</td></tr>
+        <tr><td>Xero Invoice ID</td><td>Single line text</td><td></td></tr>
+        <tr><td>Xero Invoice Number</td><td>Single line text</td><td></td></tr>
+        <tr><td>Invoice Status</td><td>Single select</td><td>Processing / Awaiting Payment / Paid / Voided / Cancelled / Failed</td></tr>
+        <tr><td>Payment Request Sent At</td><td>Date and time</td><td>Flow B only</td></tr>
+        <tr><td>Invoice Raised At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Payment Confirmed At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Payment Reflected in Breww</td><td>Checkbox</td><td></td></tr>
+        <tr><td>PO Number</td><td>Single line text</td><td>If provided by customer</td></tr>
+      </tbody></table></div>
+
+      <h3>3.5 Integration Health</h3>
+      <div class="table-wrap"><table><thead><tr><th>Field Name</th><th>Type</th><th>Values / Notes</th></tr></thead><tbody>
+        <tr><td>Check Name</td><td>Single line text</td><td>e.g. "Breww polling", "Xero polling", "Onboarding webhook"</td></tr>
+        <tr><td>Last Run At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Status</td><td>Single select</td><td>Healthy / Warning / Error</td></tr>
+        <tr><td>Last Error</td><td>Long text</td><td></td></tr>
+        <tr><td>Notes</td><td>Long text</td><td></td></tr>
+      </tbody></table></div>
+
+      <h3>3.6 Error Log</h3>
+      <div class="table-wrap"><table><thead><tr><th>Field Name</th><th>Type</th><th>Values / Notes</th></tr></thead><tbody>
+        <tr><td>Workflow Name</td><td>Single line text</td><td>e.g. "WF-A2-FLOW-A"</td></tr>
+        <tr><td>Record ID</td><td>Single line text</td><td>Breww ID, Order ID, Invoice ID etc.</td></tr>
+        <tr><td>Record Type</td><td>Single select</td><td>Customer / Order / Invoice / Depot / Other</td></tr>
+        <tr><td>Operation</td><td>Single line text</td><td>e.g. "create_xero_invoice", "update_breww_customer"</td></tr>
+        <tr><td>Error Message</td><td>Long text</td><td>Full error text</td></tr>
+        <tr><td>HTTP Status Code</td><td>Number</td><td>If API call, the HTTP status returned</td></tr>
+        <tr><td>Timestamp</td><td>Date and time</td><td></td></tr>
+        <tr><td>Retry Count</td><td>Number</td><td>0–4</td></tr>
+        <tr><td>Status</td><td>Single select</td><td>Retrying / Resolved / Failed</td></tr>
+        <tr><td>Resolved At</td><td>Date and time</td><td></td></tr>
+        <tr><td>Alert Sent</td><td>Checkbox</td><td>Whether admin was notified</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <!-- Part 4 -->
+    <section id="p4">
+      <div class="part-header">
+        <div class="part-label">Part 4</div>
+        <h2 class="part-title">Automation Workflows (Workstream A)</h2>
+      </div>
+
+      <h3>4.1 Workflow Index</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Workflow ID</th><th>Name</th><th>Trigger Type</th></tr></thead>
+        <tbody>
+          <tr><td>WF-ERROR-HANDLER</td><td>Shared error handler sub-workflow</td><td>Called by other workflows</td></tr>
+          <tr><td>WF-A1-ONBOARDING-FORM</td><td>Onboarding form submission</td><td>Webhook</td></tr>
+          <tr><td>WF-A1-SAMPLE-REQUEST</td><td>Sample request form</td><td>Webhook</td></tr>
+          <tr><td>WF-A1-LEAD-FORM</td><td>Lead enquiry form</td><td>Webhook</td></tr>
+          <tr><td>WF-A2-FLOW-A</td><td>Credit terms invoice on delivery</td><td>Schedule (poll)</td></tr>
+          <tr><td>WF-A2-FLOW-B</td><td>Pay-in-advance order flow</td><td>Schedule (poll)</td></tr>
+          <tr><td>WF-A2-FLOW-B-TIMEOUT</td><td>Pay-in-advance payment timeout check</td><td>Schedule (cron)</td></tr>
+          <tr><td>WF-A2-FLOW-C</td><td>Shopify order invoice</td><td>Schedule (poll)</td></tr>
+          <tr><td>WF-A2-XERO-POLL</td><td>Poll Xero for AUTHORISED → PAID</td><td>Schedule (cron)</td></tr>
+          <tr><td>WF-A3-CUSTOMER-MATCH</td><td>Customer matching logic</td><td>Called by onboarding form</td></tr>
+          <tr><td>WF-A3-REVIEW-QUEUE-WATCH</td><td>Watch Airtable for resolved reviews</td><td>Schedule (poll)</td></tr>
+          <tr><td>WF-A3-ADMIN-APPROVAL</td><td>Admin approve / reject handler</td><td>Webhook</td></tr>
+          <tr><td>WF-A3-SELLAR-INTERCEPT</td><td>Sellar order interception</td><td>Schedule (poll)</td></tr>
+          <tr><td>WF-A4-DEPOT-NOTIFY</td><td>Depot dispatch notification</td><td>Schedule (poll)</td></tr>
+          <tr><td>WF-A4-DEPOT-CONFIRM</td><td>One-click depot confirmation handler</td><td>Webhook</td></tr>
+          <tr><td>WF-A4-DEPOT-ESCALATE</td><td>Depot non-confirmation check</td><td>Schedule (cron)</td></tr>
+          <tr><td>WF-A4-HEALTH-CHECK</td><td>Integration health check</td><td>Schedule (cron)</td></tr>
+        </tbody>
+      </table></div>
+
+      <!-- Error handler -->
+      <h3 id="wf-error">4.2 WF-ERROR-HANDLER — Shared Error Handler</h3>
+      <div class="box box-warn"><p><strong>Build this first</strong> — before any workflow that makes an API call. Every other workflow calls this sub-workflow on error.</p></div>
+      <h4>Input parameters</h4>
+      <div class="code-wrap"><pre>{
+  "workflowName": "string",
+  "recordId": "string",
+  "recordType": "Customer | Order | Invoice | Depot | Other",
+  "operation": "string",
+  "errorMessage": "string",
+  "httpStatusCode": "number | null",
+  "retryCount": "number (0-based)",
+  "payload": "object (original payload to retry with)"
+}</pre></div>
+      <h4>Node sequence</h4>
+      <ol class="steps">
+        <li><strong>Webhook / Execute Workflow Trigger</strong> — receives input from calling workflow</li>
+        <li><strong>IF: retryCount &lt; 4?</strong> YES → continue to delay; NO → max retries exceeded branch</li>
+        <li><strong>Switch: retryCount</strong> — 0 → wait 30s, 1 → wait 2min, 2 → wait 10min, 3 → max retries</li>
+        <li><strong>Write Airtable: Error Log</strong> — Status: Retrying, all input fields, Retry Count: retryCount + 1</li>
+        <li><strong>Retry original operation</strong> — HTTP Request node with original payload (passed in)</li>
+        <li><strong>IF: retry succeeded?</strong> YES → Write Airtable: Error Log → Status: Resolved; NO → loop back to step 2 with retryCount + 1</li>
+        <li><strong>Max retries exceeded branch</strong> — Write Airtable: Error Log → Status: Failed, Alert Sent: true; Send alert email to admin; End</li>
+      </ol>
+
+      <!-- Onboarding -->
+      <h3 id="wf-onboarding">4.3 WF-A1-ONBOARDING-FORM</h3>
+      <div class="wf-card">
+        <div class="wf-card-head"><span class="wf-id">WF-A1-ONBOARDING-FORM</span><span class="wf-name">Onboarding form submission</span><span class="wf-trigger">Webhook (POST)</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>Webhook node</strong> — receives form payload</li>
+            <li><strong>Function: Validate Turnstile</strong> — POST to Cloudflare siteverify. Fail → return 400.</li>
+            <li><strong>Function: Validate required fields</strong> — trading name, email, postcode, consent checkbox. Fail → return 400.</li>
+            <li><strong>Function: Generate Consent ID</strong> — format CONSENT-YYYY-XXXX. Read last number from Airtable, increment, zero-pad to 4 digits.</li>
+            <li><strong>Google Drive: Create PDF</strong> — consent PDF with all submitted fields + timestamp + Consent ID. Upload to Trade Account Agreements/CONSENT-YYYY-XXXX.pdf</li>
+            <li><strong>Airtable: Create record in Customer Sync</strong> — Status: Pending, all submitted fields, Consent ID, Drive file URL</li>
+            <li><strong>Execute Workflow: WF-A3-CUSTOMER-MATCH</strong> — pass name, email, VAT, postcode, phone, Consent ID, Airtable record ID</li>
+            <li><strong>Return 200 to form</strong> — confirmation message shown to applicant</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Sample Request -->
+      <h3 id="wf-sample">4.4 WF-A1-SAMPLE-REQUEST — Sample Request Form</h3>
+      <div class="wf-card">
+        <div class="wf-card-head"><span class="wf-id">WF-A1-SAMPLE-REQUEST</span><span class="wf-name">Sample request form submission</span><span class="wf-trigger">Webhook (POST)</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>Webhook node</strong> — receives form payload from sample request form</li>
+            <li><strong>Function: Validate Turnstile</strong> — POST to Cloudflare siteverify. Fail → return 400.</li>
+            <li><strong>Function: Validate required fields</strong> — name, email, business name, postcode, product interest. Fail → return 400.</li>
+            <li><strong>Function: Read Brevo opt-in checkbox</strong> — capture field <code>brevo_opt_in</code> (boolean). Store value. <em>This is the only Brevo touchpoint in Phase 1. Full Brevo–Breww contact sync is a next-stage item.</em></li>
+            <li><strong>Google Drive: Create PDF</strong> — sample request PDF with all submitted fields + timestamp. Upload to Sample Requests/SAMPLE-[timestamp]-[name].pdf</li>
+            <li><strong>Airtable: Create record in Customer Sync</strong> — Status: Pending, all submitted fields, Drive file URL, Brevo opt-in value stored in Notes field for now</li>
+            <li><strong>Gmail: Send internal notification</strong> — alert admin team of new sample request with applicant details</li>
+            <li><strong>Gmail: Send confirmation to applicant</strong> — From: integrations@podkovan.com (Podkováň UK), Reply-to: admin inbox. Confirm receipt and next steps.</li>
+            <li><strong>Return 200 to form</strong> — confirmation message shown to applicant</li>
+          </ol>
+          <div class="box box-info" style="margin-top:12px;"><p><strong>Note on Brevo opt-in (Step 4):</strong> The opt-in value is stored in Airtable for now. When Brevo–Breww contact sync is built in a future phase, this stored value will be used to set the correct Brevo list membership. Do not build any Brevo API call in this phase.</p></div>
+        </div>
+      </div>
+
+      <!-- Customer matching -->
+      <h3 id="wf-matching">4.5 WF-A3-CUSTOMER-MATCH — Customer Matching Logic</h3>
+      <p>Called by WF-A1-ONBOARDING-FORM. Run matching steps in this exact order:</p>
+      <h4>Step 1 — Check Airtable for existing Breww ID</h4>
+      <p>Search Customer Sync for submitted email OR VAT matching existing record with a Breww ID. If found → <strong>Outcome A</strong>.</p>
+      <h4>Step 2 — Search Breww by VAT number</h4>
+      <p>HTTP Request → Breww API: search customers by VAT. One result found → <strong>Outcome A</strong>.</p>
+      <h4>Step 3 — Search Breww by normalised name + postcode</h4>
+      <div class="code-wrap"><pre>name
+  .toLowerCase()
+  .replace(/[^\w\s]/g, '')           // strip punctuation
+  .replace(/\b(ltd|limited|plc|llp|trading as|t\/a)\b/g, '')
+  .replace(/^the\s+/, '')
+  .trim()</pre></div>
+      <ul>
+        <li>1 result, name + postcode match → <strong>Outcome A</strong></li>
+        <li>Multiple results OR name matches but postcode differs → <strong>Outcome B</strong></li>
+        <li>0 results → Step 4</li>
+      </ul>
+      <h4>Step 4 — Phone as supporting signal only</h4>
+      <p>If two candidates and one shares phone → flag in Outcome B notes but still route to Outcome B (do not auto-confirm).</p>
+      <h4>Step 5 — No match → Outcome C</h4>
+
+      <h4>Outcome A — Exact Match</h4>
+      <ol><li>Update Airtable Customer Sync: Breww ID, Status: Synced</li><li>Call WF-A3-ADMIN-APPROVAL with: outcome = A, Breww customer ID, Airtable record ID</li></ol>
+
+      <h4>Outcome B — Possible Match</h4>
+      <ol><li>Airtable: Create record in Review Queue — Status: Awaiting Review, candidate Breww IDs, candidate names, match reason</li><li>Send internal notification to admin team</li><li>WF-A3-REVIEW-QUEUE-WATCH will pick up when status changes</li></ol>
+
+      <h4>Outcome C — No Match</h4>
+      <ol>
+        <li>HTTP Request → Breww API: Create customer — Status: On Hold, Payment type: Pay in advance, Reference: Consent ID <em>(max 30 chars — confirmed by Chris)</em></li>
+        <li>Update Airtable Customer Sync: new Breww ID, Status: Pending</li>
+        <li>Call WF-A3-ADMIN-APPROVAL with: outcome = C, new Breww customer ID, Airtable record ID</li>
+      </ol>
+
+      <!-- Flow A -->
+      <h3 id="wf-flow-a">4.7 WF-A2-FLOW-A — Credit Terms Invoice on Delivery</h3>
+      <div class="wf-card">
+        <div class="wf-card-head"><span class="wf-id">WF-A2-FLOW-A</span><span class="wf-name">Credit terms invoice on delivery</span><span class="wf-trigger">Schedule — poll every 5 min</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>HTTP Request → Breww API</strong> — Get orders with status = delivery completed, modified since last poll timestamp</li>
+            <li><strong>Loop over each order</strong></li>
+            <li><strong>Airtable Search: Invoice State</strong> — IF invoice already exists for this order ID → skip (idempotency)</li>
+            <li><strong>HTTP Request → Breww API</strong> — Get full order details (line items, quantities, prices, PO number)</li>
+            <li><strong>HTTP Request → Breww API</strong> — Get customer payment terms</li>
+            <li><strong>Function: Calculate due date</strong> — Net 14/30/60/90, 30 EOM logic</li>
+            <li><strong>Airtable: Write Invoice State</strong> → Status: Processing</li>
+            <li><strong>HTTP Request → Xero API: Create invoice</strong> — Type: ACCREC, Status: AUTHORISED, correct contact, line items, due date, PO reference</li>
+            <li><strong>IF: Xero API error?</strong> → Call WF-ERROR-HANDLER</li>
+            <li><strong>Airtable: Update Invoice State</strong> — Xero Invoice ID, Number, Status: Awaiting Payment, raised timestamp</li>
+            <li><strong>Update last poll timestamp</strong> in n8n static data</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Flow B -->
+      <h3 id="wf-flow-b">4.9–4.10 WF-A2-FLOW-B — Pay-in-Advance Order Flow</h3>
+      <div class="wf-card">
+        <div class="wf-card-head"><span class="wf-id">WF-A2-FLOW-B</span><span class="wf-name">Pay-in-advance order flow</span><span class="wf-trigger">Schedule — poll every 5 min</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>HTTP Request → Breww API</strong> — Get new orders, payment type = Pro-forma</li>
+            <li><strong>Airtable Search: Invoice State</strong> — IF record already exists → skip (idempotency)</li>
+            <li><strong>HTTP Request → Breww API: Set order processing to blocked</strong> — <span class="tag tag-validate">Validate in Discovery</span></li>
+            <li><strong>Airtable: Write Invoice State</strong> → Status: Awaiting Payment, Payment Request Sent At: now</li>
+            <li><strong>Gmail: Send payment request email</strong> — From: integrations@podkovan.com (Podkováň UK), Reply-to: admin inbox. Subject: "Payment required for your Podkováň order". Include Stripe + GoCardless payment links. Label clearly: "This is a payment request, not a VAT invoice."</li>
+            <li><strong>WF-A2-XERO-POLL</strong> handles payment detection</li>
+          </ol>
+          <p><em>On payment confirmed (detected by XERO-POLL): Create Xero ACCREC invoice → allocate payment immediately → Mark Breww order as paid → Send internal notification → dispatch release (validate API capability)</em></p>
+        </div>
+      </div>
+
+      <!-- Flow C -->
+      <h3 id="wf-flow-c">4.11 WF-A2-FLOW-C — Shopify Order Invoice</h3>
+      <div class="wf-card">
+        <div class="wf-card-head"><span class="wf-id">WF-A2-FLOW-C</span><span class="wf-name">Shopify order invoice</span><span class="wf-trigger">Schedule — poll every 5 min</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>HTTP Request → Breww API</strong> — Get orders: source = Shopify, status = paid, modified since last poll</li>
+            <li><strong>Airtable Search: Invoice State</strong> — IF invoice already exists → skip (idempotency)</li>
+            <li><strong>HTTP Request → Xero API: Create VAT invoice</strong> — Type: ACCREC, Status: AUTHORISED, allocate payment immediately → invoice shows as already paid, no reminder sent</li>
+            <li><strong>IF: Xero API error?</strong> → Call WF-ERROR-HANDLER</li>
+            <li><strong>Airtable: Write Invoice State</strong> — Flow: C: Shopify, Status: Paid, Xero IDs, timestamps</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Depot -->
+      <h3 id="wf-depot">4.12–4.14 Depot Flows</h3>
+      <div class="wf-card">
+        <div class="wf-card-head"><span class="wf-id">WF-A4-DEPOT-NOTIFY</span><span class="wf-name">Depot dispatch notification</span><span class="wf-trigger">Schedule — poll every 5 min</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>HTTP Request → Breww API</strong> — Get orders with status = dispatch, modified since last poll</li>
+            <li><strong>Airtable Search: Depot Status</strong> — IF record already exists → skip (idempotency)</li>
+            <li><strong>Function: Determine depot</strong> — apply depot routing logic <span class="tag tag-tbd">TBD with Chris</span></li>
+            <li><strong>Function: Generate confirmation token</strong> — <code>require('crypto').randomBytes(32).toString('hex')</code></li>
+            <li><strong>Airtable: Create Depot Status record</strong> — Status: Pending, store token</li>
+            <li><strong>Gmail: Send depot notification email</strong> — order details, one-click confirm link: <code>https://n8n-host/webhook/depot-confirm?token=[TOKEN]</code>. No login required.</li>
+            <li><strong>Airtable: Update Depot Status</strong> → Status: Awaiting Confirmation</li>
+          </ol>
+        </div>
+      </div>
+      <div class="wf-card" style="margin-top:12px;">
+        <div class="wf-card-head"><span class="wf-id">WF-A4-DEPOT-CONFIRM</span><span class="wf-name">One-click confirmation handler</span><span class="wf-trigger">Webhook (GET)</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>Webhook node</strong> — receives token from URL parameter</li>
+            <li><strong>Airtable Search: Depot Status</strong> — find record by Confirmation Token</li>
+            <li><strong>IF: record found AND status = Awaiting Confirmation?</strong> NO → return: "This confirmation link is no longer valid."</li>
+            <li><strong>Airtable: Update Depot Status</strong> → Status: Confirmed, Confirmed At: now</li>
+            <li><strong>HTTP Request → Breww API</strong> — Write depot confirmation back to order <span class="tag tag-validate">Validate in Discovery</span></li>
+            <li><strong>Gmail: Send confirmation receipt to admin team</strong></li>
+            <li><strong>Return 200 to browser</strong> — "Thank you. Order #X confirmed."</li>
+          </ol>
+        </div>
+      </div>
+      <div class="wf-card" style="margin-top:12px;">
+        <div class="wf-card-head"><span class="wf-id">WF-A4-DEPOT-ESCALATE</span><span class="wf-name">Non-confirmation escalation check</span><span class="wf-trigger">Schedule — cron every 60 min</span></div>
+        <div class="wf-card-body">
+          <ol class="steps">
+            <li><strong>Airtable: Get Depot Status records</strong> where Status = Awaiting Confirmation</li>
+            <li><strong>Function: Check timeout</strong> — IF (now − Email Sent At) &gt; escalation timeout <span class="tag tag-tbd">TBD with Chris</span> → escalate</li>
+            <li><strong>Gmail / Slack: Send alert</strong> — recipient <span class="tag tag-tbd">TBD with Chris</span></li>
+            <li><strong>Airtable: Update Depot Status</strong> → Status: Overdue / Escalated</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 5 -->
+    <section id="p5">
+      <div class="part-header">
+        <div class="part-label">Part 5</div>
+        <h2 class="part-title">Developer Claude Build Prompt</h2>
+      </div>
+
+      <h3>5.1 How to Use</h3>
+      <p>Open a new Claude conversation. Upload this entire document (the Master Technical Document PDF or HTML file) as an attachment. Then paste the prompt below and tell Claude which workflow you want it to build. Claude will read the document and use it as its full context — no manual copy-pasting required.</p>
+      <div class="box box-warn"><p><strong>Always upload the whole document, not a summary or excerpt.</strong> Claude needs every rule, constraint and schema to build correctly. If you cannot attach a file, copy and paste the full prompt block followed by the full text of the relevant Part 4 workflow section.</p></div>
+
+      <h3>5.2 n8n Automation Build Prompt</h3>
+      <div class="prompt-wrap">
+        <div class="prompt-head">
+          <span class="prompt-head-label">Claude build prompt — Automation (Workstream A)</span>
+          <button class="copy-btn" id="copy-prompt-a">Copy</button>
+        </div>
+        <div class="prompt-body" id="prompt-a-text">You are building n8n automation workflows for a client called Podkovan UK.
+
+You have one source of truth for this project: the Master Technical Document provided to you. Do not use any knowledge or assumptions outside of what this document gives you. If something is not in the document, say so and ask rather than inventing an answer.
+
+---
+
+PROJECT RULES — apply to every workflow you build:
+
+1. LOOP PREVENTION
+Every sync operation uses SHA-256 hash comparison against Airtable before writing to any destination system. Same hash = stop. Different hash = proceed, then write new hash to Airtable.
+Implementation: Function node with crypto.createHash('sha256'), Airtable Search node, IF node branching on hash match.
+
+2. IDEMPOTENCY
+Before creating any record (Breww customer, Xero invoice, Airtable row), check if it already exists using the stored ID in Airtable. If it exists, skip creation and continue. If it does not exist, create it, store the ID in Airtable, and continue.
+
+3. ERROR HANDLING AND RETRY
+Every HTTP Request node has Continue on Fail = ON. After every HTTP Request, add an IF node checking for error. On error: call the shared sub-workflow WF-ERROR-HANDLER. The error handler manages retry with exponential backoff (30s, 2min, 10min), Airtable error logging, and admin alerting.
+
+4. AIRTABLE STATE WRITES
+Write to Airtable before every external action (status = Processing/Pending) and after every action (status = result). Never skip this.
+
+5. FIELD OWNERSHIP
+n8n never overwrites a field in a system that owns it. Breww owns all customer and order data — read only. Xero owns invoice and payment data — n8n creates invoices but does not modify Xero data it did not create. Airtable is state only — n8n is the only writer.
+
+---
+
+ARCHITECTURE:
+- Shopify and Sellar feed orders into Breww via native integrations
+- n8n sits between Breww and Xero
+- Airtable sits alongside n8n (not in the data pipeline)
+- Breww native Xero integration is DEACTIVATED — n8n creates all invoices via the Xero API
+- Breww is source of truth for customers and orders
+- Never auto-create or auto-link a customer without confirmed match or human approval
+
+---
+
+AIRTABLE BASE: Podkovan Integration
+Tables: Customer Sync / Review Queue / Depot Status / Invoice State / Integration Health / Error Log
+Full field schema is in the Master Technical Document Part 3.
+
+---
+
+CREDENTIALS (use these exact names in n8n credential store):
+- Breww API: "Podkovan Breww API"
+- Xero API: "Podkovan Xero"
+- Airtable: "Podkovan Airtable"
+- Gmail: "Podkovan Gmail"
+- Google Drive: "Podkovan Google Drive"
+
+---
+
+EMAIL RULES:
+- All automated emails send from integrations@podkovan.com
+- Sender name: Podkováň UK
+- Reply-to: admin team inbox (not the integrations address)
+- Never send a VAT invoice from Gmail — Xero sends VAT invoices
+- Payment request emails (Flow B) are explicitly labelled "This is a payment request, not a VAT invoice"
+- Order summary emails are explicitly labelled "This is an order summary, not a VAT invoice"
+
+---
+
+THINGS TO NEVER INVENT:
+- Depot routing logic (TBD with Chris)
+- Escalation timeout (TBD with Chris)
+- Escalation recipient (TBD with Chris)
+- Payment window for Flow B timeout (TBD with Chris)
+- Breww API endpoints that are marked "validate in Discovery"
+- Admin Slack channel or email (TBD with Chris)
+
+If a step involves one of these unknowns, build the workflow with a placeholder node clearly labelled "[CONFIG REQUIRED: depot routing / escalation timeout / etc.]" and document what needs to be filled in.
+
+---
+
+WORKFLOW NAMING: WF-[MILESTONE]-[NAME]
+Example: WF-A2-FLOW-A, WF-ERROR-HANDLER
+
+---
+
+BUILD OUTPUT REQUIRED:
+1. n8n workflow as importable JSON (ready to paste into n8n → Import)
+2. Brief node-by-node summary: what each node does and why
+3. List of anything that needs manual configuration after import (credential names, Airtable base ID, any placeholder values)
+4. List of any discovery-dependent steps that need to be filled in later
+
+---
+
+The full Master Technical Document is attached to this conversation. Read it now.
+
+Then build the following workflow:
+
+[DESCRIBE THE WORKFLOW YOU NEED — e.g. "WF-A2-FLOW-A: Pay-in-advance invoice flow" or "WF-A3: Customer matching and duplicate resolution"]</div>
+      </div>
+
+      <h3>5.3 Shopify Build Prompt</h3>
+      <div class="prompt-wrap">
+        <div class="prompt-head">
+          <span class="prompt-head-label">Claude build prompt — Shopify (Workstream B)</span>
+          <button class="copy-btn" id="copy-prompt-b">Copy</button>
+        </div>
+        <div class="prompt-body" id="prompt-b-text">You are configuring a Shopify B2B trade store for Podkovan UK.
+
+Source of truth: the Shopify Developer Brief attached to this conversation. Read it now. Do not use any knowledge or assumptions outside what that document gives you.
+
+Key rules (also in the brief — do not skip them):
+- This is a B2B-only trade store on Shopify Grow plan
+- Trade customers are pre-approved only — self-registration is DISABLED
+- Shopify connects to Breww via Breww's native Shopify integration
+- The Shopify Xero app is NOT connected — invoicing is handled by n8n
+- Shopify payment reminders are DISABLED
+- Shopify invoice emails are DISABLED
+- Breww is the source of truth for all customer data — Shopify never overwrites Breww
+
+Task: [describe the specific Shopify task you need help with]</div>
+      </div>
+    </section>
+
+    <!-- Part 6 -->
+    <section id="p6">
+      <div class="part-header">
+        <div class="part-label">Part 6</div>
+        <h2 class="part-title">Shopify Workstream (Workstream B)</h2>
+      </div>
+
+      <h3>6.1 What We Are Building</h3>
+      <p>A B2B-only trade store on Shopify Grow plan. For pre-approved trade customers only. No public access. Trade customers go through the Podkovan trade account application first (Workstream A), get approved in Breww, then receive a Shopify login invitation from n8n.</p>
+
+      <h3>6.2 What Shopify Does NOT Do</h3>
+      <ul>
+        <li>Does NOT send VAT invoices (Xero does that via n8n)</li>
+        <li>Does NOT connect to Xero directly (Shopify Xero app: NOT connected)</li>
+        <li>Does NOT allow unapproved customers to register or browse</li>
+        <li>Does NOT override Breww as the customer source of truth</li>
+        <li>Does NOT set credit terms due dates (that lives in Xero via n8n)</li>
+      </ul>
+
+      <h3>6.3 Shopify Plan and Limitations</h3>
+      <p>Plan: <strong>Shopify Grow</strong>. Up to 3 price catalogues (by market segment, not individual company). Known limitation: customer-specific pricing requires Shopify Plus — raise with Chris if needed.</p>
+
+      <h3>6.4 Milestone B1 — Store and Breww Integration (Week 1 | 30 hrs)</h3>
+      <ul>
+        <li>Shopify Grow store created</li>
+        <li>Trade-only access enabled, customer self-registration DISABLED</li>
+        <li>Brand theme applied: logo, colours, fonts (obtain files from Chris)</li>
+        <li>Breww native Shopify integration connected and configured</li>
+        <li>Customer auto-creation from Shopify disabled (validate Breww integration setting)</li>
+        <li>B2B companies and buyers framework set up</li>
+        <li>Test: order on Shopify → appears in Breww under correct customer</li>
+      </ul>
+      <div class="box box-info"><p><strong>Validate in Discovery:</strong> What does Breww native Shopify integration do when no customer match is found? Can auto-creation be disabled? Does it support two Shopify stores?</p></div>
+
+      <h3>6.5 Milestone B2 — Payments and Finance (Week 2 | 26 hrs)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Type</th><th>Who Uses It</th><th>What Happens</th></tr></thead>
+        <tbody>
+          <tr><td>Card at checkout</td><td>Pay-in-advance customers</td><td>Payment collected at checkout. n8n raises VAT invoice via Flow C.</td></tr>
+          <tr><td>On account</td><td>Credit terms customers</td><td>No payment at checkout. n8n raises VAT invoice on delivery via Flow A.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Email</th><th>Setting</th></tr></thead>
+        <tbody>
+          <tr><td>Order confirmation</td><td>ENABLED — Shopify sends this</td></tr>
+          <tr><td>Payment reminders</td><td>DISABLED</td></tr>
+          <tr><td>Invoice emails</td><td>DISABLED — Xero handles VAT invoices</td></tr>
+          <tr><td>Shipping confirmation</td><td>Confirm with Chris</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>6.6 Milestone B3 — Automation and Testing (Week 3 | 20 hrs)</h3>
+      <ul>
+        <li>Shopify orders routing into n8n Flow C (coordinate with Workstream A developer)</li>
+        <li>Depot notifications triggered for Shopify orders</li>
+        <li>Shopify login invitation flow connected to Workstream A onboarding approval</li>
+        <li>End-to-end: checkout → Breww → n8n → Xero VAT invoice → customer receives invoice</li>
+        <li>End-to-end: checkout → Breww → n8n → depot notification → one-click confirm</li>
+      </ul>
+
+      <h3>6.8 Questions for Chris — Shopify</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Question</th><th>Needed For</th></tr></thead>
+        <tbody>
+          <tr><td>Shopify account access</td><td>B1 start</td></tr>
+          <tr><td>Number of price catalogues at launch</td><td>B2</td></tr>
+          <tr><td>Segment rules per catalogue</td><td>B2</td></tr>
+          <tr><td>Default catalogue for new trade customers</td><td>B2</td></tr>
+          <tr><td>Brand files: logo, hex colours, fonts</td><td>B1</td></tr>
+          <tr><td>Consumer store: Phase 1 or later?</td><td>Planning</td></tr>
+          <tr><td>Two-store support needed from day one?</td><td>B1</td></tr>
+          <tr><td>Shipping confirmation emails: enabled or disabled?</td><td>B2</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>6.10 Out of Scope for Workstream B</h3>
+      <ul>
+        <li>Consumer store (future add-on)</li>
+        <li>Brevo connection from Shopify (Breww native — already live)</li>
+        <li><strong>Brevo–Breww campaign sync</strong> — not in this phase. The only Brevo touchpoint in Phase 1 is the "send me news" opt-in checkbox on the sample/lead request form, which is captured and stored. Full Brevo–Breww contact and campaign sync is a next-stage item.</li>
+        <li>Custom Shopify theme development</li>
+        <li>Customer-specific pricing (requires Plus)</li>
+        <li>Any Xero configuration beyond account code mapping (Workstream A)</li>
+        <li>Sellar integration (Workstream A)</li>
+        <li>Stripe/GoCardless payment setup (these run via Xero, not Shopify)</li>
+      </ul>
+    </section>
+
+    <!-- Part 7 -->
+    <section id="p7">
+      <div class="part-header">
+        <div class="part-label">Part 7</div>
+        <h2 class="part-title">Discovery Validation Checklist</h2>
+      </div>
+      <div class="box box-warn"><p><strong>Do not build anything that depends on an unvalidated capability.</strong> Confirm each item before the relevant milestone starts.</p></div>
+
+      <h3>7.1 Breww API</h3>
+      <div class="box" style="margin-bottom:16px;"><p><strong>Sandbox testing completed Nov 2026.</strong> Confirmed items are based on direct API testing. Items marked Validate still require live environment confirmation or further testing.</p></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Capability</th><th>Used In</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Filter orders by <code>last_modified_at__gte</code> timestamp</td><td>All order polling</td><td><span class="tag tag-confirmed">Confirmed ✓</span></td></tr>
+          <tr><td>Customer search by email address</td><td>Customer matching</td><td><span class="tag tag-confirmed">Confirmed ✓</span></td></tr>
+          <tr><td>Customer search by VAT number</td><td>Matching Step 2</td><td><span class="tag tag-confirmed">Confirmed ✓</span></td></tr>
+          <tr><td>Set <code>block_order_processing</code> (prevent dispatch)</td><td>Flow B</td><td><span class="tag tag-confirmed">Confirmed ✓</span></td></tr>
+          <tr><td>Customer last-modified filter on customers endpoint</td><td>Customer sync polling</td><td><span class="tag tag-no">Not Available — polling workaround required</span></td></tr>
+          <tr><td>Write to custom fields via API</td><td>Any custom field storage</td><td><span class="tag tag-no">Not Available — READ ONLY (Connor at Breww confirmed; feature request exists)</span></td></tr>
+          <tr><td>File/document attachments to customer records via API</td><td>Consent document storage</td><td><span class="tag tag-no">Not Available — Google Drive used instead</span></td></tr>
+          <tr><td>Write to order notes via API</td><td>Logging</td><td><span class="tag tag-no">Not Available — Airtable used for state/notes</span></td></tr>
+          <tr><td>Read and write customer reference/external ID field</td><td>Customer matching / Consent ID storage</td><td><span class="tag tag-validate">Validate — Reference field confirmed 30-char max</span></td></tr>
+          <tr><td>Update customer status (On Hold → Active)</td><td>Onboarding</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Search customers by name + postcode</td><td>Matching Step 3</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Release dispatch hold programmatically</td><td>Flow B</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Mark order as paid via API</td><td>All invoice flows</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Cancel/void order via API</td><td>Flow B timeout</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Write depot confirmation back to order</td><td>Depot flow</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Delivery completed: webhook or requires polling?</td><td>Flow A</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Dispatch state change: webhook or requires polling?</td><td>Depot flow</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Rate limits (requests per minute/hour)</td><td>All</td><td><span class="tag tag-validate">Validate</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>7.2 Xero API</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Capability</th><th>Used In</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>All invoicing via n8n Xero API — Breww native Xero integration is DEACTIVATED</td><td>All invoice flows</td><td><span class="tag tag-confirmed">Confirmed ✓ — accountant signed off</span></td></tr>
+          <tr><td>Create ACCREC invoice with line items</td><td>All invoice flows</td><td><span class="tag tag-validate">Validate in live environment</span></td></tr>
+          <tr><td>Mark invoice as already paid (allocate payment)</td><td>Flow B, Flow C</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Poll invoice status AUTHORISED → PAID</td><td>Flow A, Flow B</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Void/credit an invoice</td><td>Flow B timeout</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Xero sends invoice emails to customer (not Gmail, not Breww)</td><td>All — no duplicate emails</td><td><span class="tag tag-confirmed">Confirmed ✓ — accountant confirmed this route</span></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>7.3 Breww-Shopify Native Integration</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Capability</th><th>Used In</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Does it auto-create Breww customers from Shopify orders?</td><td>B1</td><td><span class="tag tag-validate">Validate — we need this OFF</span></td></tr>
+          <tr><td>What happens when no customer match is found?</td><td>B1</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Can auto-creation be disabled?</td><td>B1</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Does it support two Shopify stores?</td><td>B1</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Which Breww fields does it populate from Shopify?</td><td>B1</td><td><span class="tag tag-validate">Validate</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Part 8 -->
+    <section id="p8">
+      <div class="part-header">
+        <div class="part-label">Part 8</div>
+        <h2 class="part-title">Open Questions for Chris</h2>
+      </div>
+      <div class="box box-warn"><p><strong>Nothing in this section should be assumed.</strong> Build placeholders where needed and document the gap.</p></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Question</th><th>Affects</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Who approves trade account applications?</td><td>Onboarding</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>2</td><td>Who approves payment term changes?</td><td>Invoice flows</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>3</td><td>How is the correct depot selected per order?</td><td>Depot routing</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>4</td><td>Who receives depot non-confirmation alerts?</td><td>Escalation</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>5</td><td>How long before a depot non-confirmation escalates?</td><td>Escalation</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>6</td><td>What is the payment window for Flow B before order is cancelled?</td><td>Flow B timeout</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>7</td><td>Which Slack channel or email receives system alerts/errors?</td><td>Error handling</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>8</td><td>Sellar import mode: auto-approve or manual in Breww?</td><td>Sellar intercept</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>9</td><td>How many Shopify price catalogues needed at launch?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>10</td><td>Segment rules per price catalogue?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>11</td><td>Default catalogue for new trade customers?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>12</td><td>Shipping confirmation emails: enabled or disabled?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>13</td><td>Consumer store: Phase 1 or later?</td><td>Planning</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>14</td><td>Xero clearing account for Shopify payouts — card payments go to clearing account, fees to account 406. Payout transfers from clearing to bank.</td><td>Flow C</td><td><span class="tag tag-confirmed">Confirmed ✓ — accountant confirmed</span></td></tr>
+          <tr><td>15</td><td>Account 406 is for Shopify processing fees. Account 405 may be linked to Stripe — confirm exact usage with accountant during setup.</td><td>Flow C</td><td><span class="tag tag-validate">406 confirmed for Shopify fees. 405/Stripe — confirm at setup</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Part 9 -->
+    <section id="p9">
+      <div class="part-header">
+        <div class="part-label">Part 9</div>
+        <h2 class="part-title">Milestone Deliverables Checklist</h2>
+      </div>
+
+      <p>This checklist maps every deliverable to its milestone. Use it to confirm scope before each milestone starts and to sign off completion. Items marked <span class="tag tag-tbd">TBD</span> need a Chris decision before build can start. Items marked <span class="tag tag-validate">Validate in Discovery</span> depend on API capability confirmation.</p>
+
+      <h3>Workstream A — Automation</h3>
+
+      <h4>A1 — Foundation (Weeks 1–2 | 36 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>A1.1</td><td>n8n instance live on DigitalOcean UK</td><td>Self-hosted, accessible, SSL configured</td></tr>
+          <tr><td>A1.2</td><td>All credentials stored in n8n encrypted credential store</td><td>Breww (sandbox key), Xero, Airtable, Gmail, Google Drive</td></tr>
+          <tr><td>A1.3</td><td>Airtable base "Podkovan Integration" created with all 6 tables</td><td>Customer Sync, Review Queue, Depot Status, Invoice State, Integration Health, Error Log — full schema per Part 3</td></tr>
+          <tr><td>A1.4</td><td>WF-ERROR-HANDLER sub-workflow built and tested</td><td>Exponential backoff: 30s, 2min, 10min. Airtable error logging. Admin alert on max retries.</td></tr>
+          <tr><td>A1.5</td><td>WF-A1-ONBOARDING-FORM webhook live</td><td>Turnstile validation, Consent ID generation, Google Drive PDF upload, Airtable record creation, triggers WF-A3-CUSTOMER-MATCH</td></tr>
+          <tr><td>A1.6</td><td>WF-A1-SAMPLE-REQUEST webhook live</td><td>Turnstile validation, Brevo opt-in captured and stored in Airtable, Google Drive PDF, admin notification, applicant confirmation email</td></tr>
+          <tr><td>A1.7</td><td>WF-A1-LEAD-FORM webhook live</td><td>Basic capture and admin notification. No Breww write.</td></tr>
+          <tr><td>A1.8</td><td>All public-facing form pages deployed to FastComet hosting via FTP</td><td>HTML pages in /forms folder. Cloudflare Turnstile under Chris's account.</td></tr>
+          <tr><td>A1.9</td><td>Google Drive "Podkováň — Compliance Records" shared drive configured</td><td>Folders: Trade Account Agreements / T&amp;Cs / Sample Requests. integrations@podkovan.com as collaborator.</td></tr>
+          <tr><td>A1.10</td><td>Loop prevention pattern implemented and verified in at least one round-trip test</td><td>SHA-256 hash comparison. Same hash = stop.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>A2 — Invoice Flows (Weeks 3–4 | 52 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>A2.1</td><td>WF-A2-FLOW-A live — credit terms invoice on delivery</td><td>Polls Breww for delivered orders. Creates Xero ACCREC invoice. Calculates due date per terms (Net 14/30/60/90, 30 EOM). Airtable state tracking.</td></tr>
+          <tr><td>A2.2</td><td>WF-A2-FLOW-B live — pay-in-advance order flow</td><td>Polls Breww for pro-forma orders. Blocks dispatch. Sends payment request email (explicitly not a VAT invoice). Triggers Xero invoice on payment. <span class="tag tag-validate">Validate dispatch hold/release API</span></td></tr>
+          <tr><td>A2.3</td><td>WF-A2-FLOW-B-TIMEOUT live — payment window expiry</td><td>Cancels order after agreed window. <span class="tag tag-tbd">TBD — payment window duration with Chris</span></td></tr>
+          <tr><td>A2.4</td><td>WF-A2-FLOW-C live — Shopify paid order invoice</td><td>Creates Xero ACCREC invoice. Allocates payment immediately (shows as paid, no reminder).</td></tr>
+          <tr><td>A2.5</td><td>WF-A2-XERO-POLL live — detect AUTHORISED → PAID in Xero</td><td>Polls Xero for payment. Reflects payment in Breww. Airtable state updated.</td></tr>
+          <tr><td>A2.6</td><td>All three invoice flows tested end-to-end in Xero demo company</td><td>No live customer impact during testing.</td></tr>
+          <tr><td>A2.7</td><td>Breww native Xero integration confirmed DEACTIVATED</td><td>Accountant sign-off confirmed. Must stay off.</td></tr>
+          <tr><td>A2.8</td><td>No duplicate invoice emails — Xero is the only sender of VAT invoices</td><td>Shopify invoice emails disabled. Payment request emails explicitly labelled "not a VAT invoice".</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>A3 — Customer Matching (Weeks 5–6 | 30 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>A3.1</td><td>WF-A3-CUSTOMER-MATCH sub-workflow built</td><td>Four-step matching: Airtable existing ID → VAT search in Breww → normalised name + postcode → phone signal. Three outcomes: A (exact), B (possible), C (no match).</td></tr>
+          <tr><td>A3.2</td><td>Outcome A — exact match auto-links and continues sync</td><td>Breww ID stored in Airtable. Status: Synced.</td></tr>
+          <tr><td>A3.3</td><td>Outcome B — possible match goes to Airtable Review Queue</td><td>Candidates shown. Human decides: Link Existing or Create New. No auto-action.</td></tr>
+          <tr><td>A3.4</td><td>Outcome C — no match creates new Breww customer</td><td>Status: On Hold. Payment type: Pay in advance. Reference: Consent ID (max 30 chars).</td></tr>
+          <tr><td>A3.5</td><td>WF-A3-REVIEW-QUEUE-WATCH live</td><td>Polls Airtable. When review status changes, n8n performs the chosen action and stores confirmed mapping.</td></tr>
+          <tr><td>A3.6</td><td>WF-A3-ADMIN-APPROVAL webhook live</td><td>Admin approves or rejects onboarding. Breww customer status updated. Shopify login invitation sent on approval.</td></tr>
+          <tr><td>A3.7</td><td>WF-A3-SELLAR-INTERCEPT live</td><td>Polls Breww for Sellar-sourced orders. Routes to correct invoice flow. <span class="tag tag-tbd">TBD — Sellar import mode (auto-approve or manual) with Chris</span></td></tr>
+          <tr><td>A3.8</td><td>Name normalisation function tested against real Breww customer names</td><td>Strip: ltd, limited, plc, llp, t/a, punctuation, leading "The".</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>A4 — Operations (Weeks 7–8 | 44 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>A4.1</td><td>WF-A4-DEPOT-NOTIFY live</td><td>Polls Breww for dispatched orders. Determines depot. Generates one-click confirmation token. Sends depot email. Airtable: Pending → Awaiting Confirmation. <span class="tag tag-tbd">TBD — depot routing logic with Chris</span></td></tr>
+          <tr><td>A4.2</td><td>WF-A4-DEPOT-CONFIRM webhook live</td><td>One-click confirmation. No login required. Token validates in Airtable. Updates Airtable: Confirmed. Writes back to Breww where API supports it. <span class="tag tag-validate">Validate Breww write-back capability</span></td></tr>
+          <tr><td>A4.3</td><td>WF-A4-DEPOT-ESCALATE live</td><td>Hourly cron. Checks for overdue unconfirmed depots. Sends alert. Airtable: Overdue / Escalated. <span class="tag tag-tbd">TBD — escalation timeout and recipient with Chris</span></td></tr>
+          <tr><td>A4.4</td><td>WF-A4-HEALTH-CHECK live</td><td>Cron check on all integration endpoints. Updates Airtable Integration Health. Sends alert on sustained failure.</td></tr>
+          <tr><td>A4.5</td><td>Airtable operational dashboard views configured</td><td>Customer Sync dashboard, Review Queue, Depot Status, Integration Health, Error Log — all visible to Chris's team without technical knowledge.</td></tr>
+          <tr><td>A4.6</td><td>All automated emails tested from integrations@podkovan.com</td><td>Sender: Podkováň UK. Reply-to: admin inbox. 2FA confirmed on sending account.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>A5 — Quality and Sign-off (Weeks 9–10 | 28 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>A5.1</td><td>Full end-to-end test: onboarding form → customer match → Breww creation → Shopify invite → order → invoice → payment → Breww reflection</td><td>Using test customer. No live customer impact.</td></tr>
+          <tr><td>A5.2</td><td>Full end-to-end test: dispatch order → depot notification → one-click confirm → Breww update → Airtable confirmed</td><td></td></tr>
+          <tr><td>A5.3</td><td>Full end-to-end test: possible duplicate → Review Queue → human decision → n8n action → sync continues</td><td></td></tr>
+          <tr><td>A5.4</td><td>Error handler tested: API failure → retry → alert on max retries</td><td>All retry timings confirmed: 30s, 2min, 10min.</td></tr>
+          <tr><td>A5.5</td><td>Loop prevention verified: change in Breww → n8n sync → no echo back</td><td>Hash comparison confirmed working in both directions.</td></tr>
+          <tr><td>A5.6</td><td>Loom walkthrough recorded for Chris's team</td><td>Cover: Airtable dashboard, Review Queue process, what each alert means.</td></tr>
+          <tr><td>A5.7</td><td>Chris sign-off on Workstream A</td><td>All open questions resolved before sign-off.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Workstream B — Shopify</h3>
+
+      <h4>B1 — Store and Breww Integration (Week 1 | 30 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>B1.1</td><td>Shopify Grow store created and configured for B2B trade only</td><td>Customer self-registration DISABLED. No public browsing.</td></tr>
+          <tr><td>B1.2</td><td>Brand theme applied</td><td>Logo, colours, fonts from Chris. No custom theme development.</td></tr>
+          <tr><td>B1.3</td><td>Breww native Shopify integration connected and configured</td><td>Auto-creation of Breww customers from Shopify disabled. <span class="tag tag-validate">Validate this setting exists</span></td></tr>
+          <tr><td>B1.4</td><td>B2B companies and buyers framework set up in Shopify</td><td>Pre-approved customers only.</td></tr>
+          <tr><td>B1.5</td><td>Test: Shopify order → appears in Breww under correct existing customer</td><td>No new Breww customer created from Shopify.</td></tr>
+          <tr><td>B1.6</td><td>Shopify Xero app confirmed NOT connected</td><td>Xero invoicing is handled entirely by Workstream A n8n flows.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>B2 — Payments and Finance (Week 2 | 26 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>B2.1</td><td>Card at checkout configured for pay-in-advance customers</td><td>Payment collected at checkout. Feeds into Flow C.</td></tr>
+          <tr><td>B2.2</td><td>On-account payment method configured for credit terms customers</td><td>No payment at checkout. Feeds into Flow A.</td></tr>
+          <tr><td>B2.3</td><td>Price catalogues configured</td><td><span class="tag tag-tbd">TBD — number and segment rules with Chris</span></td></tr>
+          <tr><td>B2.4</td><td>Shopify payment reminder emails DISABLED</td><td></td></tr>
+          <tr><td>B2.5</td><td>Shopify VAT invoice emails DISABLED</td><td>Xero handles all VAT invoices.</td></tr>
+          <tr><td>B2.6</td><td>Shopify order confirmation emails ENABLED</td><td></td></tr>
+          <tr><td>B2.7</td><td>Shopify shipping confirmation email setting confirmed with Chris</td><td><span class="tag tag-tbd">TBD — enabled or disabled?</span></td></tr>
+          <tr><td>B2.8</td><td>Xero clearing account for Shopify card payments confirmed</td><td>Card payments → clearing account. Shopify processing fees → account 406. Confirmed by accountant.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>B3 — Automation and Testing (Week 3 | 20 hrs)</h4>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Deliverable</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>B3.1</td><td>Shopify orders routing correctly into n8n Flow C</td><td>Coordinate with Workstream A developer. Breww source = Shopify, status = paid.</td></tr>
+          <tr><td>B3.2</td><td>Depot notifications triggered correctly for Shopify orders</td><td>Same depot flow as non-Shopify orders.</td></tr>
+          <tr><td>B3.3</td><td>Shopify login invitation flow connected to Workstream A onboarding approval</td><td>n8n sends invite only after admin approval and Breww customer creation.</td></tr>
+          <tr><td>B3.4</td><td>End-to-end test: checkout → Breww → n8n Flow C → Xero VAT invoice → customer receives invoice</td><td></td></tr>
+          <tr><td>B3.5</td><td>End-to-end test: checkout → Breww → n8n depot notification → one-click confirm</td><td></td></tr>
+          <tr><td>B3.6</td><td>Chris sign-off on Workstream B</td><td>All open questions resolved before sign-off.</td></tr>
+        </tbody>
+      </table></div>
+
+    </section>
+
+    <!-- Part 10 (original Part 9 — Security) -->
+    <section id="p10">
+      <div class="part-header">
+        <div class="part-label">Part 10</div>
+        <h2 class="part-title">Security Requirements</h2>
+      </div>
+      <p>Applies to both workstreams from day one.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Breww API key</td><td>Server-side only. Sandbox/dev key during build. Full-access key created at go-live only.</td></tr>
+          <tr><td>Credential sharing</td><td>Via Bitwarden Send only. Never email, chat, or plain text.</td></tr>
+          <tr><td>Airtable account</td><td>Must be in Chris's company name (confirmed: created 28 Oct 2026 by Chris)</td></tr>
+          <tr><td>n8n credentials</td><td>Stored in n8n encrypted credential store only</td></tr>
+          <tr><td>Named logins</td><td>Individual named logins for all systems — no shared passwords</td></tr>
+          <tr><td>2FA</td><td>Enabled on integrations@podkovan.com via Google Authenticator</td></tr>
+          <tr><td>Admin approval tokens</td><td>Cryptographically random, stored in Airtable, single-use</td></tr>
+          <tr><td>Depot confirmation tokens</td><td>Cryptographically random 32-byte hex. No login required for confirm flow — token IS the credential.</td></tr>
+          <tr><td>Turnstile spam protection</td><td>Cloudflare Turnstile on all public-facing forms (onboarding, sample request, lead)</td></tr>
+          <tr><td>Consent documents</td><td>Stored permanently in Google Drive — "Podkováň — Compliance Records" shared drive</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Mobile nav toggle -->
+<button class="nav-toggle" id="nav-toggle" aria-label="Open navigation">☰</button>
+<div class="nav-overlay" id="nav-overlay"></div>
+
+<script>
+// Mobile nav
+const toggle = document.getElementById('nav-toggle');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('nav-overlay');
+
+toggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+});
+
+// Theme toggle
+const themeBtn = document.getElementById('theme-toggle');
+let currentTheme = null;
+try { currentTheme = localStorage.getItem('podkovan-theme'); } catch(e) {}
+if (currentTheme) document.documentElement.setAttribute('data-theme', currentTheme);
+
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('podkovan-theme', next); } catch(e) {}
+});
+
+// Copy buttons
+function setupCopyBtn(btnId, textId) {
+  const btn = document.getElementById(btnId);
+  const textEl = document.getElementById(textId);
+  if (!btn || !textEl) return;
+  btn.addEventListener('click', () => {
+    const text = textEl.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(() => {
+      // fallback: select the text
+      const range = document.createRange();
+      range.selectNodeContents(textEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+  });
+}
+setupCopyBtn('copy-prompt-a', 'prompt-a-text');
+setupCopyBtn('copy-prompt-b', 'prompt-b-text');
+
+// Active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link[data-section]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + id || l.getAttribute('data-section') === id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body></html>

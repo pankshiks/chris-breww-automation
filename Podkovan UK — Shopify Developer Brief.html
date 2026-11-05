@@ -1,0 +1,827 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Podkovan UK — Shopify Developer Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --bg-panel: #f7f8fa;
+    --bg-panel-2: #eef0f4;
+    --border: #e2e5eb;
+    --fg: #1a1d23;
+    --fg-mid: #3d4350;
+    --fg-dim: #6b7280;
+    --accent: #2563eb;
+    --accent-light: #eff4ff;
+    --accent-border: #bfdbfe;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-border: #bbf7d0;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --amber-border: #fde68a;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --purple-border: #ddd6fe;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1117;
+      --bg-panel: #1a1d26;
+      --bg-panel-2: #222630;
+      --border: #2d3141;
+      --fg: #e8eaf0;
+      --fg-mid: #b0b7c8;
+      --fg-dim: #6b7585;
+      --accent: #4f8ef7;
+      --accent-light: #1a2340;
+      --accent-border: #2d4080;
+      --green: #22c55e;
+      --green-bg: #0d2318;
+      --green-border: #166534;
+      --amber: #f59e0b;
+      --amber-bg: #1f1800;
+      --amber-border: #78350f;
+      --red: #f87171;
+      --red-bg: #200a0a;
+      --red-border: #7f1d1d;
+      --purple: #a78bfa;
+      --purple-bg: #180f2e;
+      --purple-border: #4c1d95;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1117;
+    --bg-panel: #1a1d26;
+    --bg-panel-2: #22263a;
+    --border: #2d3141;
+    --fg: #e8eaf0;
+    --fg-mid: #b0b7c8;
+    --fg-dim: #6b7585;
+    --accent: #4f8ef7;
+    --accent-light: #1a2340;
+    --accent-border: #2d4080;
+    --green: #22c55e;
+    --green-bg: #0d2318;
+    --green-border: #166534;
+    --amber: #f59e0b;
+    --amber-bg: #1f1800;
+    --amber-border: #78350f;
+    --red: #f87171;
+    --red-bg: #200a0a;
+    --red-border: #7f1d1d;
+    --purple: #a78bfa;
+    --purple-bg: #180f2e;
+    --purple-border: #4c1d95;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background: var(--bg);
+    color: var(--fg);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0;
+  }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 0 32px;
+  }
+  .sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .sidebar-logo-name { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-dim); }
+  .sidebar-logo-doc { font-size: 13px; font-weight: 600; color: var(--fg); margin-top: 2px; }
+  .sidebar-badge {
+    display: inline-block;
+    margin-top: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .nav-section-label {
+    display: block;
+    padding: 10px 20px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+  .nav-link {
+    display: block;
+    padding: 6px 20px;
+    font-size: 12.5px;
+    color: var(--fg-mid);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .nav-link:hover { color: var(--fg); background: var(--bg-panel-2); }
+  .nav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-light); }
+  .nav-link.sub { padding-left: 32px; font-size: 12px; }
+
+  /* Main */
+  main { flex: 1; min-width: 0; padding: 40px 48px 80px; max-width: 900px; }
+
+  /* Header */
+  .doc-header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .doc-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .doc-title { font-size: 26px; font-weight: 700; color: var(--fg); line-height: 1.25; margin-bottom: 6px; }
+  .doc-subtitle { font-size: 15px; color: var(--fg-mid); margin-bottom: 16px; }
+  .doc-meta { display: flex; flex-wrap: wrap; gap: 16px; }
+  .doc-meta-item { font-size: 12px; color: var(--fg-dim); }
+  .doc-meta-item strong { color: var(--fg-mid); font-weight: 500; }
+
+  /* Section */
+  section { margin-bottom: 56px; }
+  .part-header { margin-bottom: 24px; }
+  .part-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  h2.part-title { font-size: 20px; font-weight: 700; color: var(--fg); margin: 0; }
+  h3 { font-size: 15px; font-weight: 600; color: var(--fg); margin: 28px 0 10px; }
+  h4 { font-size: 13px; font-weight: 600; color: var(--fg-mid); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+  p { margin: 0 0 12px; color: var(--fg-mid); }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; color: var(--fg-mid); }
+  li { margin-bottom: 5px; }
+  strong { color: var(--fg); }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg-panel-2); padding: 2px 5px; border-radius: 3px; color: var(--accent); }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--bg-panel); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-dim); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--fg-mid); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-panel); }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 3px; }
+  .tag-confirmed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .tag-validate { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .tag-no { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .tag-tbd { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .tag-open { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .tag-disabled { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .tag-enabled { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+
+  /* Info boxes */
+  .box { padding: 14px 18px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; color: var(--fg-mid); }
+  .box-warn { background: var(--amber-bg); border: 1px solid var(--amber-border); border-left: 3px solid var(--amber); }
+  .box-info { background: var(--accent-light); border: 1px solid var(--accent-border); border-left: 3px solid var(--accent); }
+  .box-green { background: var(--green-bg); border: 1px solid var(--green-border); border-left: 3px solid var(--green); }
+  .box-red { background: var(--red-bg); border: 1px solid var(--red-border); border-left: 3px solid var(--red); }
+  .box p { margin: 0; }
+  .box p + p { margin-top: 6px; }
+
+  /* Rules grid */
+  .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .rule-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .rule-card.rule-must { border-left: 3px solid var(--red); }
+  .rule-card.rule-must-not { border-left: 3px solid var(--red); }
+  .rule-card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+  .rule-card-label.green { color: var(--green); }
+  .rule-card.rule-green { border-left: 3px solid var(--green); }
+  .rule-card-text { font-size: 13px; color: var(--fg); font-weight: 500; }
+  .rule-card-sub { font-size: 12px; color: var(--fg-dim); margin-top: 3px; }
+
+  /* Milestone cards */
+  .milestone-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+  .milestone-card-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--bg-panel-2); }
+  .milestone-id { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; background: var(--accent); color: #fff; padding: 3px 8px; border-radius: 4px; }
+  .milestone-name { font-size: 14px; font-weight: 600; color: var(--fg); }
+  .milestone-meta { font-size: 12px; color: var(--fg-dim); margin-left: auto; }
+  .milestone-card-body { padding: 16px 18px; }
+  .milestone-card-body ol, .milestone-card-body ul { margin: 0; }
+
+  /* Prompt */
+  .prompt-wrap { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+  .prompt-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #161b22; border-bottom: 1px solid #30363d; }
+  .prompt-head-label { font-size: 11px; font-weight: 600; color: #8b949e; letter-spacing: 0.04em; }
+  .prompt-body { padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.65; color: #c9d1d9; white-space: pre-wrap; word-break: break-word; }
+  .copy-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border: 1px solid #30363d; background: #21262d; color: #8b949e; border-radius: 4px; cursor: pointer; }
+  .copy-btn:hover { background: #30363d; color: #c9d1d9; }
+
+  /* Handoff banner */
+  .handoff-banner { background: var(--accent); color: #fff; border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .handoff-banner strong { color: #fff; }
+  .handoff-banner p { color: rgba(255,255,255,0.88); margin: 0; }
+  .handoff-banner p + p { margin-top: 4px; }
+
+  /* Steps */
+  ol.steps { padding-left: 20px; }
+  ol.steps li { margin-bottom: 8px; color: var(--fg-mid); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    main { padding: 24px 0 60px; }
+  }
+</style>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-name">Podkovan UK</div>
+      <div class="sidebar-logo-doc">Shopify Brief</div>
+      <span class="sidebar-badge">Workstream B</span>
+    </div>
+
+    <span class="nav-section-label">Overview</span>
+    <a class="nav-link" href="#overview">What You Are Building</a>
+    <a class="nav-link" href="#rules">The Rules</a>
+    <a class="nav-link" href="#prompt">Claude Build Prompt</a>
+
+    <span class="nav-section-label">Milestones</span>
+    <a class="nav-link" href="#b1">B1 — Store + Breww</a>
+    <a class="nav-link" href="#b2">B2 — Payments + Finance</a>
+    <a class="nav-link" href="#b3">B3 — Automation + Testing</a>
+
+    <span class="nav-section-label">Reference</span>
+    <a class="nav-link" href="#discovery">Discovery Checklist</a>
+    <a class="nav-link" href="#questions">Open Questions</a>
+    <a class="nav-link" href="#scope">Out of Scope</a>
+    <a class="nav-link" href="#credentials">Credentials</a>
+  </nav>
+
+  <!-- Main -->
+  <main id="content">
+
+    <header class="doc-header">
+      <div class="doc-eyebrow">Podkovan UK · Phase 1</div>
+      <div class="doc-title">Shopify Developer Brief</div>
+      <div class="doc-subtitle">Workstream B — B2B Trade Store</div>
+      <div class="doc-meta">
+        <span class="doc-meta-item"><strong>Project</strong> Podkovan UK Integration &amp; Trade Store</span>
+        <span class="doc-meta-item"><strong>Agency</strong> LN Webworks</span>
+        <span class="doc-meta-item"><strong>Client</strong> Chris (Podkovan UK)</span>
+        <span class="doc-meta-item"><strong>Version</strong> 1.0</span>
+        <span class="doc-meta-item"><strong>Last updated</strong> November 2026</span>
+      </div>
+    </header>
+
+    <div class="handoff-banner">
+      <strong>Developer handoff note</strong>
+      <p>This document covers Workstream B only — the Shopify trade store. You do not need to read the full master document. Everything you need to build and configure the store is here. For anything touching n8n, Xero, or Airtable, coordinate with the Workstream A developer — do not build that logic yourself.</p>
+    </div>
+
+    <!-- Overview -->
+    <section id="overview">
+      <div class="part-header">
+        <div class="part-label">Section 1</div>
+        <h2 class="part-title">What You Are Building</h2>
+      </div>
+
+      <p>A <strong>B2B-only trade store</strong> on Shopify Grow plan for Podkovan UK. This is not a consumer store. It is exclusively for pre-approved trade customers who have already been onboarded through the Podkovan trade account application process.</p>
+
+      <h3>How it fits into the wider system</h3>
+      <p>Your Shopify store is one piece of a larger integration. Here is where it sits:</p>
+
+      <div class="box box-info">
+        <p><strong>Customer journey:</strong> Trade application form → n8n approval → Breww customer created → Shopify login invitation sent → Customer orders on Shopify → Order lands in Breww → n8n raises Xero invoice → n8n sends depot notification.</p>
+        <p><strong>Your job:</strong> Build and configure the Shopify store correctly. The n8n developer handles everything that happens after the order lands in Breww.</p>
+      </div>
+
+      <h3>System connections</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>System</th><th>Connection</th><th>Your Role</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Breww</strong></td><td>Breww native Shopify integration</td><td>Connect and configure. Validate that auto-customer-creation is off.</td></tr>
+          <tr><td><strong>Xero</strong></td><td><span class="tag tag-no">NOT connected</span></td><td>Do not connect the Shopify Xero app. n8n handles all invoicing.</td></tr>
+          <tr><td><strong>n8n</strong></td><td>n8n polls Breww for Shopify orders</td><td>No action from you. n8n developer handles this.</td></tr>
+          <tr><td><strong>Brevo</strong></td><td><span class="tag tag-no">NOT connected</span></td><td>Do not connect any Brevo/Mailchimp app to Shopify.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Milestones at a glance</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Milestone</th><th>Name</th><th>Week</th><th>Hours</th></tr></thead>
+        <tbody>
+          <tr><td><strong>B1</strong></td><td>Store and Breww Integration</td><td>Week 1</td><td>30 hrs</td></tr>
+          <tr><td><strong>B2</strong></td><td>Payments and Finance</td><td>Week 2</td><td>26 hrs</td></tr>
+          <tr><td><strong>B3</strong></td><td>Automation and Testing</td><td>Week 3</td><td>20 hrs</td></tr>
+          <tr><td><strong>Total</strong></td><td></td><td>3 weeks</td><td><strong>76 hrs</strong></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Rules -->
+    <section id="rules">
+      <div class="part-header">
+        <div class="part-label">Section 2</div>
+        <h2 class="part-title">The Rules</h2>
+      </div>
+
+      <p>These are non-negotiable. Break any of them and the wider integration will fail.</p>
+
+      <div class="rules-grid">
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Connect the Shopify Xero app</div>
+          <div class="rule-card-sub">n8n creates all Xero invoices via API. A second Xero connection will cause duplicate invoices.</div>
+        </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Allow customer self-registration</div>
+          <div class="rule-card-sub">Every trade customer must be approved in Breww first. No unapproved customer should ever reach the store.</div>
+        </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Enable Shopify invoice emails</div>
+          <div class="rule-card-sub">Xero sends all VAT invoices. Shopify sending its own invoice emails will cause duplicate communication to customers.</div>
+        </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Enable Shopify payment reminders</div>
+          <div class="rule-card-sub">Xero handles all payment reminders. Shopify reminders would duplicate this.</div>
+        </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Allow Shopify to create Breww customers</div>
+          <div class="rule-card-sub">Breww is the single source of truth for customers. Only the onboarding workflow creates Breww customers. Validate that this setting is off in the Breww native integration.</div>
+        </div>
+        <div class="rule-card rule-green">
+          <div class="rule-card-label green">Must</div>
+          <div class="rule-card-text">Enable Shopify order confirmation emails</div>
+          <div class="rule-card-sub">This is the only Shopify email that should send. Customers expect to receive it after placing an order.</div>
+        </div>
+        <div class="rule-card rule-green">
+          <div class="rule-card-label green">Must</div>
+          <div class="rule-card-text">Keep Shopify Grow plan — max 3 price catalogues</div>
+          <div class="rule-card-sub">Customer-specific pricing requires Shopify Plus. If Chris needs it, raise it before B2 starts.</div>
+        </div>
+        <div class="rule-card rule-green">
+          <div class="rule-card-label green">Must</div>
+          <div class="rule-card-text">Get brand files from Chris before B1 theme work</div>
+          <div class="rule-card-sub">Logo, hex colours, fonts. Do not use placeholders if real files are available.</div>
+        </div>
+      </div>
+
+      <div class="box box-warn">
+        <p><strong>Shopify Shipping Confirmation emails — confirm with Chris before B2.</strong> This is an open question. Do not make an assumption. If Chris hasn't answered, leave disabled and document it as a placeholder.</p>
+      </div>
+    </section>
+
+    <!-- Claude Prompt -->
+    <section id="prompt">
+      <div class="part-header">
+        <div class="part-label">Section 3</div>
+        <h2 class="part-title">Claude Build Prompt</h2>
+      </div>
+
+      <p>Open a new Claude conversation. Upload this entire Shopify Developer Brief as an attachment. Then paste the prompt below and describe the task. Claude will read the document and use it as its full context — no manual copy-pasting required.</p>
+      <div style="background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:0.875rem;color:var(--amber);"><strong>Always upload the whole brief, not a summary.</strong> Claude needs every rule and milestone detail to work correctly. If you cannot attach a file, copy and paste the full prompt block followed by the relevant milestone section from this document.</div>
+
+      <div class="prompt-wrap">
+        <div class="prompt-head">
+          <span class="prompt-head-label">Claude build prompt — Shopify (Workstream B)</span>
+          <button class="copy-btn" onclick="
+            var text = document.getElementById('prompt-text').innerText;
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(text).then(function(){ this.textContent='Copied!'; }.bind(this)).catch(function(){ this.textContent='Copy failed'; }.bind(this));
+            } else { this.textContent='Copy not supported'; }
+          ">Copy</button>
+        </div>
+        <div class="prompt-body" id="prompt-text">You are configuring a Shopify B2B trade store for Podkovan UK (a craft beer / beverage brand).
+
+Source of truth: the Shopify Developer Brief attached to this conversation. Read it now. Do not use any knowledge or assumptions outside what that document gives you.
+
+PROJECT CONTEXT:
+- This is a B2B-only trade store on Shopify Grow plan
+- For pre-approved trade customers only — no public access, no self-registration
+- Shopify connects to Breww (operational platform) via Breww's native Shopify integration
+- Breww is the single source of truth for all customer data
+- n8n (a separate automation tool) handles all invoicing via Xero — Shopify does NOT connect to Xero
+- Orders placed on Shopify flow into Breww natively, then n8n picks them up for invoicing and depot notifications
+
+HARD RULES — DO NOT BREAK THESE:
+1. Do NOT connect the Shopify Xero app — n8n creates all invoices
+2. Do NOT enable customer self-registration — trade customers are pre-approved only
+3. Do NOT enable Shopify invoice emails — Xero sends all VAT invoices
+4. Do NOT enable Shopify payment reminders — Xero handles these
+5. Do NOT allow Shopify to auto-create Breww customers — Breww owns the customer
+6. DO enable Shopify order confirmation emails — this is the only Shopify email that should send
+
+PLAN LIMITS:
+- Shopify Grow plan: maximum 3 price catalogues
+- Customer-specific pricing requires Shopify Plus — flag if needed
+- No custom theme development — apply brand theme using existing Shopify theme customisation
+
+OPEN QUESTIONS (do not assume — flag these if they affect the task):
+- Number of price catalogues at launch: TBD with Chris
+- Segment rules per catalogue: TBD with Chris
+- Default catalogue for new trade customers: TBD with Chris
+- Shipping confirmation emails: TBD with Chris
+- Brand files (logo, hex colours, fonts): obtain from Chris before theme work
+
+COORDINATE WITH WORKSTREAM A DEVELOPER FOR:
+- Shopify login invitation flow (n8n sends invites after Breww approval)
+- Flow C invoice routing (n8n polls Breww for Shopify-sourced paid orders)
+- Depot notification for Shopify orders (same depot flow as non-Shopify orders)
+
+---
+
+Task: [describe the specific Shopify task you need help with — e.g. "Set up Milestone B1: create the store, disable self-registration, and connect Breww native integration"]</div>
+      </div>
+    </section>
+
+    <!-- B1 -->
+    <section id="b1">
+      <div class="part-header">
+        <div class="part-label">Milestone B1</div>
+        <h2 class="part-title">Store and Breww Integration</h2>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+        <span class="tag tag-confirmed" style="font-size:12px;">Week 1</span>
+        <span class="tag" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--fg-mid);font-size:12px;">30 hours</span>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.1</span>
+          <span class="milestone-name">Create Shopify Grow store</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Create new Shopify store on Grow plan</li>
+            <li>Set as B2B trade only — no consumer-facing pages</li>
+            <li>Confirm store region: UK</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.2</span>
+          <span class="milestone-name">Disable customer self-registration</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Settings → Checkout → Account: set to "Accounts are disabled" or require invitation only</li>
+            <li>Verify: unapproved visitors cannot create an account or browse product catalogue</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.3</span>
+          <span class="milestone-name">Apply brand theme</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Obtain from Chris: logo file, primary/secondary hex colours, font names</li>
+            <li>Apply via Shopify theme customiser — no custom theme development</li>
+            <li>Add Podkováň UK logo to header</li>
+            <li>Set brand colours in theme settings</li>
+          </ul>
+          <div class="box box-warn" style="margin-top:12px;"><p><strong>Wait for brand files from Chris before starting theme work.</strong> Do not use placeholder colours or a generic logo.</p></div>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.4</span>
+          <span class="milestone-name">Connect Breww native Shopify integration</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Connect Breww to this Shopify store via Breww's native integration</li>
+            <li><strong>Critical:</strong> Find and disable the setting that auto-creates new Breww customers from Shopify orders</li>
+            <li>Test: place a test order on Shopify → confirm it appears in Breww under the correct existing customer, not as a new customer</li>
+          </ul>
+          <div class="box box-warn" style="margin-top:12px;">
+            <p><strong>Validate in Discovery:</strong> Does Breww's native integration support disabling auto-customer-creation? What happens when no customer match is found? Does it support two Shopify stores? Confirm before B1 completes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.5</span>
+          <span class="milestone-name">Set up B2B companies and buyers framework</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Enable Shopify B2B companies feature (Grow plan)</li>
+            <li>Set up company structure: each trade customer is a company, each buyer is a contact under a company</li>
+            <li>Confirm that login invitations from n8n can target individual buyers under a company</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.6</span>
+          <span class="milestone-name">Confirm Xero app is NOT connected</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Check Apps section in Shopify admin — confirm no Xero app installed</li>
+            <li>Document this clearly so it is never accidentally connected later</li>
+          </ul>
+          <div class="box box-red" style="margin-top:12px;"><p><strong>Critical rule.</strong> The Workstream A developer's n8n flows create all Xero invoices. A Shopify Xero connection would result in duplicate invoices sent to customers.</p></div>
+        </div>
+      </div>
+
+      <h3>B1 Sign-off test</h3>
+      <div class="box box-info">
+        <p>Test customer places order on Shopify → order appears in Breww under the correct existing customer → no new Breww customer created → Xero app confirmed absent.</p>
+      </div>
+    </section>
+
+    <!-- B2 -->
+    <section id="b2">
+      <div class="part-header">
+        <div class="part-label">Milestone B2</div>
+        <h2 class="part-title">Payments and Finance</h2>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+        <span class="tag tag-confirmed" style="font-size:12px;">Week 2</span>
+        <span class="tag" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--fg-mid);font-size:12px;">26 hours</span>
+      </div>
+
+      <h3>Payment methods</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Method</th><th>Who Uses It</th><th>What Happens at Checkout</th><th>Invoice Route</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Card at checkout</strong></td>
+            <td>Pay-in-advance customers</td>
+            <td>Payment collected at checkout. Order lands in Breww as paid.</td>
+            <td>n8n Flow C: Xero invoice created and immediately marked as paid. Customer receives VAT invoice from Xero.</td>
+          </tr>
+          <tr>
+            <td><strong>On account</strong></td>
+            <td>Credit terms customers</td>
+            <td>No payment at checkout. Order placed on account.</td>
+            <td>n8n Flow A: Xero invoice created on delivery with payment due date per terms. Xero sends invoice and reminders.</td>
+          </tr>
+        </tbody>
+      </table></div>
+
+      <div class="box box-info"><p><strong>How n8n tells these apart:</strong> n8n polls Breww for new orders and reads the Breww source field and payment status. A paid Shopify order goes into Flow C. A credit terms order goes into Flow A. You do not need to build this logic — the Workstream A developer handles it. Your job is to configure the payment methods correctly so Breww receives the right data.</p></div>
+
+      <h3>Email settings</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Email Type</th><th>Setting</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Order confirmation</td><td><span class="tag tag-enabled">ENABLED</span></td><td>Customers expect this. Shopify sends it.</td></tr>
+          <tr><td>Payment reminders</td><td><span class="tag tag-disabled">DISABLED</span></td><td>Xero handles all payment reminders via its own reminder schedule.</td></tr>
+          <tr><td>Invoice emails</td><td><span class="tag tag-disabled">DISABLED</span></td><td>Xero sends all VAT invoices. Shopify sending its own would create duplicates.</td></tr>
+          <tr><td>Shipping confirmation</td><td><span class="tag tag-tbd">TBD — confirm with Chris</span></td><td>Ask Chris whether trade customers should receive Shopify shipping emails. Default to disabled until confirmed.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Price catalogues</h3>
+      <div class="box box-warn">
+        <p><strong>Open — requires Chris decision before B2 can complete.</strong> Grow plan supports up to 3 price catalogues. These are segment-based (not customer-specific). The following questions need answers:</p>
+        <ul style="margin-top:8px;margin-bottom:0;">
+          <li>How many catalogues at launch?</li>
+          <li>What segment rules decide which catalogue a customer sees?</li>
+          <li>What catalogue does a new trade customer default to?</li>
+        </ul>
+      </div>
+      <p>Build placeholder catalogues based on the most likely answer (e.g. Standard / Premium / Wholesale) and document them as "pending Chris confirmation".</p>
+
+      <div class="box box-info"><p><strong>Important limitation:</strong> Customer-specific pricing requires Shopify Plus. If Chris needs different pricing for individual companies, this is not achievable on Grow plan. Flag it immediately if this comes up.</p></div>
+
+      <h3>Xero clearing account (for card payments)</h3>
+      <p>Confirmed by accountant — when a Shopify customer pays by card at checkout:</p>
+      <ul>
+        <li>Card payment goes to a Xero clearing account (not direct to bank)</li>
+        <li>Shopify processing fees go to Xero account 406</li>
+        <li>Payout transfers from clearing account to bank account</li>
+      </ul>
+      <p>This is handled by the Workstream A developer in n8n Flow C. You do not need to configure this in Shopify — just make sure the card payment method works correctly and Breww receives the paid order status.</p>
+
+      <h3>B2 Sign-off test</h3>
+      <div class="box box-info">
+        <p>Pay-in-advance customer completes checkout with card → order arrives in Breww with paid status → all correct email settings verified. Credit terms customer completes checkout on account → order arrives in Breww with unpaid status.</p>
+      </div>
+    </section>
+
+    <!-- B3 -->
+    <section id="b3">
+      <div class="part-header">
+        <div class="part-label">Milestone B3</div>
+        <h2 class="part-title">Automation and Testing</h2>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+        <span class="tag tag-confirmed" style="font-size:12px;">Week 3</span>
+        <span class="tag" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--fg-mid);font-size:12px;">20 hours</span>
+      </div>
+
+      <div class="box box-info"><p><strong>B3 requires coordination with the Workstream A developer.</strong> The tests in this milestone connect your Shopify store to their n8n workflows. Plan a joint test session before B3 starts.</p></div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.1</span>
+          <span class="milestone-name">Shopify login invitation flow</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>When a trade customer is approved in Breww, n8n sends them a Shopify login invitation</li>
+            <li>Your role: confirm that the Shopify account invitation link works correctly when received by the customer</li>
+            <li>Test: Workstream A developer triggers an invitation → customer receives email → customer can log in and browse the store</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.2</span>
+          <span class="milestone-name">Flow C invoice routing test</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Full end-to-end: customer pays by card at Shopify checkout → order lands in Breww as paid → n8n picks it up → Xero VAT invoice created → customer receives invoice from Xero</li>
+            <li>Confirm: Shopify does NOT send its own invoice email during this test</li>
+            <li>Confirm: Xero invoice is for the correct amount and shows the correct customer</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.3</span>
+          <span class="milestone-name">Depot notification test for Shopify orders</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Shopify order → Breww → n8n depot notification → depot receives one-click confirmation email</li>
+            <li>Same depot flow as non-Shopify orders — confirm it works for Shopify-sourced orders</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.4</span>
+          <span class="milestone-name">Chris sign-off</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>All open questions from B2 (catalogues, shipping email) resolved</li>
+            <li>Both end-to-end tests completed and passing</li>
+            <li>Chris reviews and signs off Workstream B</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Discovery Checklist -->
+    <section id="discovery">
+      <div class="part-header">
+        <div class="part-label">Section 4</div>
+        <h2 class="part-title">Discovery Checklist — Shopify</h2>
+      </div>
+      <p>These items must be validated before or during B1. Do not build anything that depends on an unvalidated capability.</p>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Item</th><th>Needed For</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Does Breww native Shopify integration support disabling auto-customer-creation?</td><td>B1.4</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>What happens in Breww when a Shopify order arrives with no customer match?</td><td>B1.4</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Does Breww native Shopify integration support two Shopify stores?</td><td>B1.4</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Which Breww fields does the native integration populate from Shopify?</td><td>B1.4</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Shopify B2B companies: does Grow plan support it without Plus?</td><td>B1.5</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Can n8n send Shopify login invitations to individual buyers under a B2B company?</td><td>B3.1</td><td><span class="tag tag-validate">Validate — coordinate with Workstream A developer</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Open Questions -->
+    <section id="questions">
+      <div class="part-header">
+        <div class="part-label">Section 5</div>
+        <h2 class="part-title">Open Questions for Chris</h2>
+      </div>
+      <p>These are business decisions only Chris can answer. Build placeholders where needed and document the gap. Do not assume.</p>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Question</th><th>Needed For</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Shopify account access — does Chris have an existing account or is a new one being created?</td><td>B1 start</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>2</td><td>Brand files: logo file, primary and secondary hex colours, font names</td><td>B1.3</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>3</td><td>How many price catalogues at launch?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>4</td><td>What are the segment rules per catalogue? (e.g. by order volume, by customer type)</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>5</td><td>What catalogue does a new trade customer default to before they are assigned to a segment?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>6</td><td>Shipping confirmation emails: enabled or disabled?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>7</td><td>Consumer store: Phase 1 or a future phase?</td><td>Planning only</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>8</td><td>Two Shopify stores from day one (trade + consumer)? Or trade only for now?</td><td>B1 planning</td><td><span class="tag tag-open">Trade only confirmed for Phase 1</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Out of Scope -->
+    <section id="scope">
+      <div class="part-header">
+        <div class="part-label">Section 6</div>
+        <h2 class="part-title">Out of Scope for Workstream B</h2>
+      </div>
+      <p>Do not build any of the following. These are either handled elsewhere or are future phase items.</p>
+      <ul>
+        <li><strong>Consumer store</strong> — future phase, not Phase 1</li>
+        <li><strong>Xero connection from Shopify</strong> — n8n handles all invoicing via Xero API</li>
+        <li><strong>Brevo / Mailchimp connection from Shopify</strong> — Breww native connection handles this; already live</li>
+        <li><strong>Brevo–Breww campaign sync</strong> — not in this phase at all. The only Brevo touchpoint in Phase 1 is an opt-in checkbox on the sample request form, which is handled by Workstream A</li>
+        <li><strong>Custom Shopify theme development</strong> — theme customisation only, using existing Shopify theme tools</li>
+        <li><strong>Customer-specific pricing</strong> — requires Shopify Plus, not on Grow plan</li>
+        <li><strong>Xero account code configuration</strong> — handled by Workstream A developer</li>
+        <li><strong>Sellar integration</strong> — Sellar feeds Breww natively and is already live; handled in Workstream A</li>
+        <li><strong>Stripe or GoCardless payment setup</strong> — these run via Xero, not Shopify</li>
+        <li><strong>n8n workflows</strong> — coordinate with Workstream A developer for all n8n logic</li>
+        <li><strong>Depot notification logic</strong> — handled entirely by Workstream A</li>
+      </ul>
+    </section>
+
+    <!-- Credentials -->
+    <section id="credentials">
+      <div class="part-header">
+        <div class="part-label">Section 7</div>
+        <h2 class="part-title">Credentials and Security</h2>
+      </div>
+
+      <div class="box box-warn">
+        <p><strong>Credential sharing policy:</strong> All credentials are shared via Bitwarden Send only. Never email, chat, or plain text. Do not store passwords or API keys in any file you commit to a repository.</p>
+      </div>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Credential</th><th>Who Owns It</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Shopify store admin access</td><td>Chris</td><td>Chris grants collaborator access to LN Webworks account</td></tr>
+          <tr><td>Breww admin access (for integration setup)</td><td>Chris</td><td>Read-only access sufficient for integration configuration review</td></tr>
+          <tr><td>Brand files</td><td>Chris</td><td>Logo, colours, fonts — request directly from Chris</td></tr>
+          <tr><td>Cloudflare Turnstile</td><td>Chris's account</td><td>Not relevant to Shopify — handled by Workstream A for the forms</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Security rules</h3>
+      <ul>
+        <li>Use named logins for all systems — no shared passwords</li>
+        <li>Enable 2FA on all accounts where available</li>
+        <li>Do not store API keys or access tokens in code files, notes, or chat messages</li>
+        <li>If you need to pass a credential to the Workstream A developer, use Bitwarden Send only</li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Sidebar scroll tracking
+  var sections = document.querySelectorAll('section[id], header');
+  var navLinks = document.querySelectorAll('.nav-link');
+
+  function getActiveSectionId() {
+    var scrollY = window.scrollY + 80;
+    var current = null;
+    sections.forEach(function(sec) {
+      if (sec.offsetTop <= scrollY) current = sec.id;
+    });
+    return current;
+  }
+
+  function updateNav() {
+    var active = getActiveSectionId();
+    navLinks.forEach(function(link) {
+      var href = link.getAttribute('href').replace('#','');
+      link.classList.toggle('active', href === active);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+</script>
+
+</body></html>
