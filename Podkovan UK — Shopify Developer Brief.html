@@ -259,6 +259,7 @@
     <span class="nav-section-label">Overview</span>
     <a class="nav-link" href="#overview">What You Are Building</a>
     <a class="nav-link" href="#rules">The Rules</a>
+    <a class="nav-link" href="#brand">Brand and Site Match</a>
     <a class="nav-link" href="#prompt">Claude Build Prompt</a>
 
     <span class="nav-section-label">Milestones</span>
@@ -284,7 +285,8 @@
         <span class="doc-meta-item"><strong>Project</strong> Podkovan UK Integration &amp; Trade Store</span>
         <span class="doc-meta-item"><strong>Agency</strong> LN Webworks</span>
         <span class="doc-meta-item"><strong>Client</strong> Chris (Podkovan UK)</span>
-        <span class="doc-meta-item"><strong>Version</strong> 1.0</span>
+        <span class="doc-meta-item"><strong>Version</strong> 1.1</span>
+        <span class="doc-meta-item"><strong>Shopify lead</strong> Pankaj</span>
         <span class="doc-meta-item"><strong>Last updated</strong> November 2026</span>
       </div>
     </header>
@@ -294,6 +296,20 @@
       <p>This document covers Workstream B only — the Shopify trade store. You do not need to read the full master document. Everything you need to build and configure the store is here. For anything touching n8n, Xero, or Airtable, coordinate with the Workstream A developer — do not build that logic yourself.</p>
     </div>
 
+    <div class="box box-info">
+      <p><strong>Version 1.1 changes (from Chris's brand brief and two follow-up messages):</strong></p>
+      <ul style="margin:6px 0 0;">
+        <li>New Section 3: Brand and Site Match. The Podkovan brand brief is the only brand source and replaces any earlier spec.</li>
+        <li>Theme decided: the simplest free Shopify theme (for example Dawn), brand applied through theme settings and light CSS.</li>
+        <li>The store at trade.podkovan.com must look and work as one site with podkovan.com (header, menu, footer, announcement bar, logo).</li>
+        <li>New rule: customers never leave to a third-party store. Menu links go only to podkovan.com or trade.podkovan.com.</li>
+        <li>New menu page: Find Podkovan (podkovan.com/find-podkovan/).</li>
+        <li>New build items: announcement bar, stockist strip, over-18 check, footer line, logo and menu links back to podkovan.com.</li>
+        <li>Brand files are no longer fully open. The brief has arrived. Only the Joane Engraved font files are still to come.</li>
+        <li>Hours: the original 76 hours assumed theme settings only. The new items need re-estimating once the brand brief is reviewed.</li>
+      </ul>
+    </div>
+
     <!-- Overview -->
     <section id="overview">
       <div class="part-header">
@@ -301,7 +317,7 @@
         <h2 class="part-title">What You Are Building</h2>
       </div>
 
-      <p>A <strong>B2B-only trade store</strong> on Shopify Grow plan for Podkovan UK. This is not a consumer store. It is exclusively for pre-approved trade customers who have already been onboarded through the Podkovan trade account application process.</p>
+      <p>A <strong>B2B-only trade store</strong> on Shopify Grow plan for Podkovan UK, running at <code>trade.podkovan.com</code>. This is not a consumer store. It is exclusively for pre-approved trade customers who have already been onboarded through the Podkovan trade account application process. It must look and work as one site with the new brand site, <code>podkovan.com</code>.</p>
 
       <h3>How it fits into the wider system</h3>
       <p>Your Shopify store is one piece of a larger integration. Here is where it sits:</p>
@@ -319,6 +335,7 @@
           <tr><td><strong>Xero</strong></td><td><span class="tag tag-no">NOT connected</span></td><td>Do not connect the Shopify Xero app. n8n handles all invoicing.</td></tr>
           <tr><td><strong>n8n</strong></td><td>n8n polls Breww for Shopify orders</td><td>No action from you. n8n developer handles this.</td></tr>
           <tr><td><strong>Brevo</strong></td><td><span class="tag tag-no">NOT connected</span></td><td>Do not connect any Brevo/Mailchimp app to Shopify.</td></tr>
+          <tr><td><strong>podkovan.com</strong></td><td>Links only (logo, content menu items, footer)</td><td>It holds all content. The store links back to it. Match its look using the brand brief.</td></tr>
         </tbody>
       </table></div>
 
@@ -379,10 +396,35 @@
           <div class="rule-card-text">Keep Shopify Grow plan — max 3 price catalogues</div>
           <div class="rule-card-sub">Customer-specific pricing requires Shopify Plus. If Chris needs it, raise it before B2 starts.</div>
         </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Send customers to a third-party store</div>
+          <div class="rule-card-sub">Main menu items (Trade shop, Our beer, About, Find Podkovan, Contact) may only lead to podkovan.com or trade.podkovan.com. Never to a retailer's store.</div>
+        </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Use any brand spec other than the current brand brief</div>
+          <div class="rule-card-sub">The brand brief from Chris replaces any earlier spec. Ignore older colours, fonts or layouts.</div>
+        </div>
+        <div class="rule-card rule-must-not">
+          <div class="rule-card-label">Must NOT</div>
+          <div class="rule-card-text">Add custom theme development</div>
+          <div class="rule-card-sub">Use the simplest free theme, theme settings and light CSS only. Where the theme has limits, podkovan.com adapts to the store rather than adding custom code.</div>
+        </div>
         <div class="rule-card rule-green">
           <div class="rule-card-label green">Must</div>
-          <div class="rule-card-text">Get brand files from Chris before B1 theme work</div>
-          <div class="rule-card-sub">Logo, hex colours, fonts. Do not use placeholders if real files are available.</div>
+          <div class="rule-card-text">Match podkovan.com as one site</div>
+          <div class="rule-card-sub">Same logo, Joane Engraved headings, Podkovan gold #FFA500, header, menu, announcement bar and footer, as set out in the brand brief.</div>
+        </div>
+        <div class="rule-card rule-green">
+          <div class="rule-card-label green">Must</div>
+          <div class="rule-card-text">Always give a way back to podkovan.com</div>
+          <div class="rule-card-sub">The store logo and the content menu items link to the matching pages on podkovan.com.</div>
+        </div>
+        <div class="rule-card rule-green">
+          <div class="rule-card-label green">Must</div>
+          <div class="rule-card-text">Keep checkout, accounts and order data in our own Shopify store</div>
+          <div class="rule-card-sub">No third-party storefronts, and no data passed to another business.</div>
         </div>
       </div>
 
@@ -391,14 +433,80 @@
       </div>
     </section>
 
+    <!-- Brand and Site Match -->
+    <section id="brand">
+      <div class="part-header">
+        <div class="part-label">Section 3</div>
+        <h2 class="part-title">Brand and Site Match</h2>
+      </div>
+
+      <div class="box box-warn"><p><strong>Source of truth:</strong> the Podkovan brand brief attached by Chris. It covers colours, fonts, headings, layout, buttons, announcement bar, header, menu, footer, heroes, brand rules, the stockist strip and the over-18 check, all taken from the live podkovan.com. Use this version only. This section sets out how it applies to the store. If anything here differs from the brand brief, the brand brief wins and the difference must be reported.</p></div>
+
+      <h3>Aim</h3>
+      <p>One consistent look and behaviour across podkovan.com and trade.podkovan.com. The aim is not a pixel-perfect copy. Where a Shopify theme has limits, tell the project lead where a change on podkovan.com would make things simpler. Chris has agreed that podkovan.com can adapt to match the store's layout rather than adding custom development.</p>
+
+      <h3>Theme approach</h3>
+      <ul>
+        <li>Use the simplest free Shopify theme, for example Dawn.</li>
+        <li>Apply the brand through theme settings and light CSS only.</li>
+        <li>No custom theme development, no paid theme, no extra apps for styling.</li>
+      </ul>
+
+      <h3>What goes where</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>podkovan.com holds</th><th>Shopify trade store holds</th></tr></thead>
+        <tbody>
+          <tr><td>Our story, beers, stockists, news, all content pages</td><td>Products and prices</td></tr>
+          <tr><td>Find Podkovan page with the map of venues</td><td>Company accounts and buyers</td></tr>
+          <tr><td>The "Trade shop" and "Trade account" links, which go to the store</td><td>Checkout and order data</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Brand elements to apply</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Element</th><th>Requirement</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>Logo</td><td>Same Podkovan logo as podkovan.com. In the store, the logo links to podkovan.com.</td><td>Brand brief</td></tr>
+          <tr><td>Heading font</td><td>Joane Engraved. Fully licensed. Chris will send the font files. Add through light CSS.</td><td>Chris. Files awaited.</td></tr>
+          <tr><td>Primary colour</td><td>Podkovan gold <code>#FFA500</code></td><td>Chris's message</td></tr>
+          <tr><td>Other colours, body font, headings scale, buttons, layout, heroes</td><td>Take exact values from the brand brief. Do not guess.</td><td>Brand brief</td></tr>
+          <tr><td>Announcement bar</td><td>Use the brief's delivery wording as a placeholder. Chris will send the final trade terms text later.</td><td>Brand brief and Chris</td></tr>
+          <tr><td>Header and menu</td><td>Same labels, order and links on both sites (see menu table below).</td><td>Brand brief and Chris</td></tr>
+          <tr><td>Footer</td><td>Identical on both sites, including the bottom line: "&copy; 2026 Podkovan UK &middot; BalTraWed UK Limited, trading as Podkovan"</td><td>Chris's message</td></tr>
+          <tr><td>Stockist strip</td><td>Build as set out in the brand brief. Confirm the free theme can do it without custom code.</td><td>Brand brief</td></tr>
+          <tr><td>Over-18 check</td><td>Build as set out in the brand brief. Confirm the method before starting (see Discovery Checklist).</td><td>Brand brief</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Menu and link map</h3>
+      <p>Same labels in the same order on both sites. Exact page addresses come from the brand brief and the live site. Fill in the last column during build and keep it as the link audit record.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Menu label</th><th>On podkovan.com</th><th>In the trade store</th><th>Allowed destination</th></tr></thead>
+        <tbody>
+          <tr><td>Trade shop</td><td>Links to trade.podkovan.com</td><td>Store home or catalogue</td><td>trade.podkovan.com only</td></tr>
+          <tr><td>Our beer</td><td>Our beer page</td><td>Link to the Our beer page on podkovan.com</td><td>podkovan.com only</td></tr>
+          <tr><td>About</td><td>About page (Our story)</td><td>Link to the matching page on podkovan.com. Confirm the page with Chris.</td><td>podkovan.com only</td></tr>
+          <tr><td>Find Podkovan</td><td>podkovan.com/find-podkovan/ (new page, map of venues)</td><td>Link to podkovan.com/find-podkovan/</td><td>podkovan.com only</td></tr>
+          <tr><td>Contact</td><td>Contact page</td><td>Link to the Contact page on podkovan.com</td><td>podkovan.com only</td></tr>
+          <tr><td>Logo</td><td>Home page</td><td>Link to podkovan.com home</td><td>podkovan.com only</td></tr>
+        </tbody>
+      </table></div>
+      <p>The "Trade account" link on podkovan.com goes to the store.</p>
+
+      <div class="box box-red"><p><strong>No third-party stores.</strong> Chris does not want a customer to land on a retailer's Shopify store, lose the Podkovan branding and have their data go to another business with no route back. If retailers are shown later (for example Waitrose), it will be a small "Buy from" link on the Find Podkovan page on podkovan.com only. Never in the store's main navigation.</p></div>
+
+      <h3>Domain</h3>
+      <p>The store runs at <code>trade.podkovan.com</code>. Chris will connect the domain in Shopify himself. Do not change DNS. Tell Chris when the store is ready for the domain to be connected.</p>
+    </section>
+
     <!-- Claude Prompt -->
     <section id="prompt">
       <div class="part-header">
-        <div class="part-label">Section 3</div>
+        <div class="part-label">Section 4</div>
         <h2 class="part-title">Claude Build Prompt</h2>
       </div>
 
-      <p>Open a new Claude conversation. Upload this entire Shopify Developer Brief as an attachment. Then paste the prompt below and describe the task. Claude will read the document and use it as its full context — no manual copy-pasting required.</p>
+      <p>Open a new Claude conversation. Upload this entire Shopify Developer Brief and the Podkovan brand brief as attachments. Then paste the prompt below and describe the task. Claude will read the document and use it as its full context — no manual copy-pasting required.</p>
       <div style="background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:0.875rem;color:var(--amber);"><strong>Always upload the whole brief, not a summary.</strong> Claude needs every rule and milestone detail to work correctly. If you cannot attach a file, copy and paste the full prompt block followed by the relevant milestone section from this document.</div>
 
       <div class="prompt-wrap">
@@ -413,7 +521,7 @@
         </div>
         <div class="prompt-body" id="prompt-text">You are configuring a Shopify B2B trade store for Podkovan UK (a craft beer / beverage brand).
 
-Source of truth: the Shopify Developer Brief attached to this conversation. Read it now. Do not use any knowledge or assumptions outside what that document gives you.
+Source of truth: the Shopify Developer Brief and the Podkovan brand brief attached to this conversation. Read both now. Do not use any knowledge or assumptions outside what those documents give you. The brand brief replaces any earlier brand spec.
 
 PROJECT CONTEXT:
 - This is a B2B-only trade store on Shopify Grow plan
@@ -422,6 +530,7 @@ PROJECT CONTEXT:
 - Breww is the single source of truth for all customer data
 - n8n (a separate automation tool) handles all invoicing via Xero — Shopify does NOT connect to Xero
 - Orders placed on Shopify flow into Breww natively, then n8n picks them up for invoicing and depot notifications
+- The store runs at trade.podkovan.com and must look and work as one site with podkovan.com, which holds all content (story, beers, stockists, news). Shopify holds only products, prices, company accounts and checkout
 
 HARD RULES — DO NOT BREAK THESE:
 1. Do NOT connect the Shopify Xero app — n8n creates all invoices
@@ -430,18 +539,23 @@ HARD RULES — DO NOT BREAK THESE:
 4. Do NOT enable Shopify payment reminders — Xero handles these
 5. Do NOT allow Shopify to auto-create Breww customers — Breww owns the customer
 6. DO enable Shopify order confirmation emails — this is the only Shopify email that should send
+7. Do NOT link customers to any third-party store. Main menu items go only to podkovan.com or trade.podkovan.com
+8. DO match podkovan.com: same logo, Joane Engraved headings, Podkovan gold #FFA500, header, menu, announcement bar and footer, exactly as in the brand brief
+9. DO make the store logo and content menu items link to the matching pages on podkovan.com, and include Find Podkovan in the menu
 
 PLAN LIMITS:
 - Shopify Grow plan: maximum 3 price catalogues
 - Customer-specific pricing requires Shopify Plus — flag if needed
-- No custom theme development — apply brand theme using existing Shopify theme customisation
+- Use the simplest free Shopify theme (for example Dawn). Apply the brand through theme settings and light CSS only. No custom theme development
 
 OPEN QUESTIONS (do not assume — flag these if they affect the task):
 - Number of price catalogues at launch: TBD with Chris
 - Segment rules per catalogue: TBD with Chris
 - Default catalogue for new trade customers: TBD with Chris
 - Shipping confirmation emails: TBD with Chris
-- Brand files (logo, hex colours, fonts): obtain from Chris before theme work
+- Joane Engraved font files: awaited from Chris
+- Final trade terms text for the announcement bar: use the brand brief wording as a placeholder
+- Method for the over-18 check and the stockist strip on the free theme: confirm before building
 
 COORDINATE WITH WORKSTREAM A DEVELOPER FOR:
 - Shopify login invitation flow (n8n sends invites after Breww approval)
@@ -475,6 +589,8 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
             <li>Create new Shopify store on Grow plan</li>
             <li>Set as B2B trade only — no consumer-facing pages</li>
             <li>Confirm store region: UK</li>
+            <li>Use the simplest free theme (for example Dawn). No paid theme.</li>
+            <li>Domain: Chris connects trade.podkovan.com himself. Do not change DNS.</li>
           </ul>
         </div>
       </div>
@@ -495,16 +611,18 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
       <div class="milestone-card">
         <div class="milestone-card-head">
           <span class="milestone-id">B1.3</span>
-          <span class="milestone-name">Apply brand theme</span>
+          <span class="milestone-name">Apply brand from the Podkovan brand brief</span>
         </div>
         <div class="milestone-card-body">
           <ul>
-            <li>Obtain from Chris: logo file, primary/secondary hex colours, font names</li>
-            <li>Apply via Shopify theme customiser — no custom theme development</li>
-            <li>Add Podkováň UK logo to header</li>
-            <li>Set brand colours in theme settings</li>
+            <li>Read the Podkovan brand brief fully before starting. It is the only brand source.</li>
+            <li>Apply colours (Podkovan gold #FFA500 and the rest of the palette), body font, headings, buttons and layout through theme settings</li>
+            <li>Add the Joane Engraved heading font through light CSS once Chris sends the font files</li>
+            <li>Add the Podkovan logo to the header</li>
+            <li>Match the hero styling from the brief</li>
+            <li>Where the theme cannot match the brief, do not add custom development. List the gap and what change on podkovan.com would make it simpler.</li>
           </ul>
-          <div class="box box-warn" style="margin-top:12px;"><p><strong>Wait for brand files from Chris before starting theme work.</strong> Do not use placeholder colours or a generic logo.</p></div>
+          <div class="box box-warn" style="margin-top:12px;"><p><strong>Wait for the Joane Engraved font files before finishing headings.</strong> Use the theme's default heading font only as a temporary placeholder and mark it in the handover notes.</p></div>
         </div>
       </div>
 
@@ -553,9 +671,52 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
         </div>
       </div>
 
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.7</span>
+          <span class="milestone-name">Announcement bar, header, menu and footer</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Announcement bar: use the brand brief's delivery wording as a placeholder. Chris will send final trade terms text later.</li>
+            <li>Header and menu: same labels, order and links as podkovan.com (see the menu and link map in Section 3). Include Find Podkovan.</li>
+            <li>Logo and content menu items (Our story, Our beer, Find Podkovan, Contact) link to the matching pages on podkovan.com</li>
+            <li>Footer: identical to podkovan.com, including the bottom line "&copy; 2026 Podkovan UK &middot; BalTraWed UK Limited, trading as Podkovan"</li>
+            <li>Check every link in header, menu and footer. None may go to a third-party store.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.8</span>
+          <span class="milestone-name">Stockist strip and over-18 check</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Build both as set out in the brand brief</li>
+            <li>Confirm first whether the free theme can do each one with settings and light CSS. If a small script is needed, tell the project lead before building so Chris can agree.</li>
+          </ul>
+          <div class="box box-warn" style="margin-top:12px;"><p><strong>Validate before building:</strong> the free theme may not include an age check or a stockist strip. Do not install a paid app or write a large custom section without agreement.</p></div>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B1.9</span>
+          <span class="milestone-name">Site-match gap list for podkovan.com</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>List any place where a small change on podkovan.com would make the store match more simply (for example header height, menu wording, button style)</li>
+            <li>Give the list to the project lead so the podkovan.com team can decide</li>
+          </ul>
+        </div>
+      </div>
+
       <h3>B1 Sign-off test</h3>
       <div class="box box-info">
-        <p>Test customer places order on Shopify → order appears in Breww under the correct existing customer → no new Breww customer created → Xero app confirmed absent.</p>
+        <p>Test customer places order on Shopify → order appears in Breww under the correct existing customer → no new Breww customer created → Xero app confirmed absent. Brand check: store and podkovan.com side by side show the same logo, headings, gold, header, menu, announcement bar and footer. Link check: every menu, logo and footer link goes only to podkovan.com or trade.podkovan.com.</p>
       </div>
     </section>
 
@@ -614,6 +775,9 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
       <p>Build placeholder catalogues based on the most likely answer (e.g. Standard / Premium / Wholesale) and document them as "pending Chris confirmation".</p>
 
       <div class="box box-info"><p><strong>Important limitation:</strong> Customer-specific pricing requires Shopify Plus. If Chris needs different pricing for individual companies, this is not achievable on Grow plan. Flag it immediately if this comes up.</p></div>
+
+      <h3>Checkout look</h3>
+      <p>Apply the brand to the checkout page as far as the Grow plan allows (logo, colours). Checkout customisation is limited on Grow. If the Joane Engraved font or other brand items cannot be applied at checkout, document the limit and tell the project lead. Do not work around it with custom code.</p>
 
       <h3>Xero clearing account (for card payments)</h3>
       <p>Confirmed by accountant — when a Shopify customer pays by card at checkout:</p>
@@ -687,11 +851,28 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
       <div class="milestone-card">
         <div class="milestone-card-head">
           <span class="milestone-id">B3.4</span>
+          <span class="milestone-name">One-site consistency and link audit</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Compare podkovan.com and trade.podkovan.com on desktop and mobile: logo, headings, gold, buttons, header, menu, announcement bar, footer</li>
+            <li>Click every menu, logo and footer link in the store. Record where each one goes. All must go to podkovan.com or trade.podkovan.com.</li>
+            <li>From podkovan.com, check that "Trade shop" and "Trade account" reach the store</li>
+            <li>Check the over-18 check and stockist strip</li>
+            <li>Check that logging in and browsing in the store never sends a customer to another business's site</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.5</span>
           <span class="milestone-name">Chris sign-off</span>
         </div>
         <div class="milestone-card-body">
           <ul>
             <li>All open questions from B2 (catalogues, shipping email) resolved</li>
+            <li>Brand and link audit (B3.4) passed</li>
             <li>Both end-to-end tests completed and passing</li>
             <li>Chris reviews and signs off Workstream B</li>
           </ul>
@@ -702,7 +883,7 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
     <!-- Discovery Checklist -->
     <section id="discovery">
       <div class="part-header">
-        <div class="part-label">Section 4</div>
+        <div class="part-label">Section 5</div>
         <h2 class="part-title">Discovery Checklist — Shopify</h2>
       </div>
       <p>These items must be validated before or during B1. Do not build anything that depends on an unvalidated capability.</p>
@@ -716,6 +897,12 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
           <tr><td>Which Breww fields does the native integration populate from Shopify?</td><td>B1.4</td><td><span class="tag tag-validate">Validate</span></td></tr>
           <tr><td>Shopify B2B companies: does Grow plan support it without Plus?</td><td>B1.5</td><td><span class="tag tag-validate">Validate</span></td></tr>
           <tr><td>Can n8n send Shopify login invitations to individual buyers under a B2B company?</td><td>B3.1</td><td><span class="tag tag-validate">Validate — coordinate with Workstream A developer</span></td></tr>
+          <tr><td>Can the chosen free theme take Joane Engraved through light CSS, and match the brand brief headings and buttons?</td><td>B1.3</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Can the theme menu hold links to podkovan.com (external links) for the logo and content items?</td><td>B1.7</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>How is the over-18 check built on the free theme (settings, small script or app)?</td><td>B1.8</td><td><span class="tag tag-validate">Validate — agree with project lead before building</span></td></tr>
+          <tr><td>Can the stockist strip be built with theme settings alone?</td><td>B1.8</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>How much of the brand can be applied to the checkout page on Grow?</td><td>B2</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>With login required, can a visitor still reach the content links back to podkovan.com?</td><td>B1.2, B1.7</td><td><span class="tag tag-validate">Validate</span></td></tr>
         </tbody>
       </table></div>
     </section>
@@ -723,7 +910,7 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
     <!-- Open Questions -->
     <section id="questions">
       <div class="part-header">
-        <div class="part-label">Section 5</div>
+        <div class="part-label">Section 6</div>
         <h2 class="part-title">Open Questions for Chris</h2>
       </div>
       <p>These are business decisions only Chris can answer. Build placeholders where needed and document the gap. Do not assume.</p>
@@ -732,13 +919,16 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
         <thead><tr><th>#</th><th>Question</th><th>Needed For</th><th>Status</th></tr></thead>
         <tbody>
           <tr><td>1</td><td>Shopify account access — does Chris have an existing account or is a new one being created?</td><td>B1 start</td><td><span class="tag tag-open">Open</span></td></tr>
-          <tr><td>2</td><td>Brand files: logo file, primary and secondary hex colours, font names</td><td>B1.3</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>2</td><td>Brand: brand brief received. Joane Engraved font files still to come from Chris.</td><td>B1.3</td><td><span class="tag tag-open">Font files awaited</span></td></tr>
           <tr><td>3</td><td>How many price catalogues at launch?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
           <tr><td>4</td><td>What are the segment rules per catalogue? (e.g. by order volume, by customer type)</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
           <tr><td>5</td><td>What catalogue does a new trade customer default to before they are assigned to a segment?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
           <tr><td>6</td><td>Shipping confirmation emails: enabled or disabled?</td><td>B2</td><td><span class="tag tag-open">Open</span></td></tr>
           <tr><td>7</td><td>Consumer store: Phase 1 or a future phase?</td><td>Planning only</td><td><span class="tag tag-open">Open</span></td></tr>
           <tr><td>8</td><td>Two Shopify stores from day one (trade + consumer)? Or trade only for now?</td><td>B1 planning</td><td><span class="tag tag-open">Trade only confirmed for Phase 1</span></td></tr>
+          <tr><td>9</td><td>Final trade terms text for the announcement bar (brand brief wording used as placeholder)</td><td>B1.7</td><td><span class="tag tag-open">Chris to send later</span></td></tr>
+          <tr><td>10</td><td>Exact podkovan.com page for the About menu item (Our story?) and exact addresses for each linked page</td><td>B1.7</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>11</td><td>Domain: Chris connects trade.podkovan.com himself. Agree when the store is ready for him to do it.</td><td>B3</td><td><span class="tag tag-open">Open</span></td></tr>
         </tbody>
       </table></div>
     </section>
@@ -746,12 +936,16 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
     <!-- Out of Scope -->
     <section id="scope">
       <div class="part-header">
-        <div class="part-label">Section 6</div>
+        <div class="part-label">Section 7</div>
         <h2 class="part-title">Out of Scope for Workstream B</h2>
       </div>
       <p>Do not build any of the following. These are either handled elsewhere or are future phase items.</p>
       <ul>
         <li><strong>Consumer store</strong> — future phase, not Phase 1</li>
+        <li><strong>Any link to a third-party or retailer store</strong> — never in the store. A small "Buy from" link may be added later on the Find Podkovan page on podkovan.com only.</li>
+        <li><strong>Building or editing podkovan.com content</strong> — handled by the podkovan.com team. This workstream only supplies the gap list (B1.9).</li>
+        <li><strong>Pixel-perfect copy of podkovan.com</strong> — the aim is one consistent look using the free theme</li>
+        <li><strong>Connecting the domain</strong> — Chris does this himself in Shopify</li>
         <li><strong>Xero connection from Shopify</strong> — n8n handles all invoicing via Xero API</li>
         <li><strong>Brevo / Mailchimp connection from Shopify</strong> — Breww native connection handles this; already live</li>
         <li><strong>Brevo–Breww campaign sync</strong> — not in this phase at all. The only Brevo touchpoint in Phase 1 is an opt-in checkbox on the sample request form, which is handled by Workstream A</li>
@@ -768,7 +962,7 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
     <!-- Credentials -->
     <section id="credentials">
       <div class="part-header">
-        <div class="part-label">Section 7</div>
+        <div class="part-label">Section 8</div>
         <h2 class="part-title">Credentials and Security</h2>
       </div>
 
@@ -781,7 +975,9 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
         <tbody>
           <tr><td>Shopify store admin access</td><td>Chris</td><td>Chris grants collaborator access to LN Webworks account</td></tr>
           <tr><td>Breww admin access (for integration setup)</td><td>Chris</td><td>Read-only access sufficient for integration configuration review</td></tr>
-          <tr><td>Brand files</td><td>Chris</td><td>Logo, colours, fonts — request directly from Chris</td></tr>
+          <tr><td>Brand brief</td><td>Chris</td><td>Received. Use this version only.</td></tr>
+          <tr><td>Joane Engraved font files</td><td>Chris</td><td>Licensed. Chris will send the files. Use only for the Podkovan stores.</td></tr>
+          <tr><td>Domain (trade.podkovan.com)</td><td>Chris</td><td>Chris connects it in Shopify himself. No DNS access needed.</td></tr>
           <tr><td>Cloudflare Turnstile</td><td>Chris's account</td><td>Not relevant to Shopify — handled by Workstream A for the forms</td></tr>
         </tbody>
       </table></div>
