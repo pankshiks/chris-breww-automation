@@ -285,7 +285,7 @@
         <span class="doc-meta-item"><strong>Project</strong> Podkovan UK Integration &amp; Trade Store</span>
         <span class="doc-meta-item"><strong>Agency</strong> LN Webworks</span>
         <span class="doc-meta-item"><strong>Client</strong> Chris (Podkovan UK)</span>
-        <span class="doc-meta-item"><strong>Version</strong> 1.1</span>
+        <span class="doc-meta-item"><strong>Version</strong> 1.2</span>
         <span class="doc-meta-item"><strong>Shopify lead</strong> Pankaj</span>
         <span class="doc-meta-item"><strong>Last updated</strong> November 2026</span>
       </div>
@@ -294,6 +294,18 @@
     <div class="handoff-banner">
       <strong>Developer handoff note</strong>
       <p>This document covers Workstream B only — the Shopify trade store. You do not need to read the full master document. Everything you need to build and configure the store is here. For anything touching n8n, Xero, or Airtable, coordinate with the Workstream A developer — do not build that logic yourself.</p>
+    </div>
+
+    <div class="box box-info">
+      <p>Version 1.2 changes (from the client call on 12 November):</p>
+      <ul style="margin:6px 0 0;">
+        <li>Payments: the current trade store is prepaid through Stripe. Chris wants all customers on prepay or direct debit, but some customers are on payment terms. B1.5 and the payment section now cover this.</li>
+        <li>Pricing: some customers have a contract discount (for example 8 percent for ordering a set amount each week). Added to B1.5 and the price catalogue section.</li>
+        <li>New section: Shipping and delivery (zones, couriers, depot list from Andreia, no promised delivery dates).</li>
+        <li>New cards B3.6 to B3.9: warehouse routing, stock per location, product list and draft orders. These need scoping and Chris's answers before work starts.</li>
+        <li>New open questions 12 to 15, new discovery rows, and a note on the review login Chris will create.</li>
+        <li>Sample box request and lead source: proposed for the trade form (Workstream A). Chris to confirm before it is built.</li>
+      </ul>
     </div>
 
     <div class="box box-info">
@@ -556,6 +568,9 @@ OPEN QUESTIONS (do not assume — flag these if they affect the task):
 - Joane Engraved font files: awaited from Chris
 - Final trade terms text for the announcement bar: use the brand brief wording as a placeholder
 - Method for the over-18 check and the stockist strip on the free theme: confirm before building
+- Payment terms for some trade customers (prepay is the default): TBD with Chris
+- Warehouse routing and stock per location: scope first, TBD with Chris
+- Launch product list and sizes: TBD with Chris
 
 COORDINATE WITH WORKSTREAM A DEVELOPER FOR:
 - Shopify login invitation flow (n8n sends invites after Breww approval)
@@ -653,6 +668,8 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
             <li>Enable Shopify B2B companies feature (Grow plan)</li>
             <li>Set up company structure: each trade customer is a company, each buyer is a contact under a company</li>
             <li>Confirm that login invitations from n8n can target individual buyers under a company</li>
+            <li>Prepay is the default for trade customers. Some customers are on payment terms. Check whether payment terms are available on the current Shopify plan and report the result. Do not upgrade the plan.</li>
+            <li>Contract discount example: some customers get a fixed discount (for example 8 percent) for ordering a set amount each week. Record how this will be handled with catalogues (see Price catalogues in B2). Customer-specific pricing is not available on Grow.</li>
           </ul>
         </div>
       </div>
@@ -750,6 +767,8 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
         </tbody>
       </table></div>
 
+      <div class="box box-info"><p>From the 12 November call: orders on the current trade store are paid up front through Stripe. Chris wants every customer on prepay or direct debit going forward. Some existing customers are still on payment terms, so keep the on account route available until Chris confirms (open question 13).</p></div>
+
       <div class="box box-info"><p><strong>How n8n tells these apart:</strong> n8n polls Breww for new orders and reads the Breww source field and payment status. A paid Shopify order goes into Flow C. A credit terms order goes into Flow A. You do not need to build this logic — the Workstream A developer handles it. Your job is to configure the payment methods correctly so Breww receives the right data.</p></div>
 
       <h3>Email settings</h3>
@@ -774,7 +793,19 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
       </div>
       <p>Build placeholder catalogues based on the most likely answer (e.g. Standard / Premium / Wholesale) and document them as "pending Chris confirmation".</p>
 
+      <div class="box box-info"><p>Contract discount example from the 12 November call: a recurring customer on terms gets about 8 percent off if they order a set amount each week. Use this when proposing the catalogue segments. Because catalogues are segment based and limited to 3 on Grow, a discount for one named customer may not be possible. Report this to the project lead.</p></div>
+
       <div class="box box-info"><p><strong>Important limitation:</strong> Customer-specific pricing requires Shopify Plus. If Chris needs different pricing for individual companies, this is not achievable on Grow plan. Flag it immediately if this comes up.</p></div>
+
+      <h3>Shipping and delivery</h3>
+      <p>Facts from the 12 November call. Use them to set up shipping and to ask the right questions. Do not guess beyond them.</p>
+      <ul>
+        <li>Orders go out from several depots and by couriers (DX and APC are named). The depot list, what each depot can pick and ship, and how each wants to be told about an order is being compiled by Andreia and sent to Chris. Chris will then send it to the team.</li>
+        <li>Some delivery areas are covered by specific depots and others by couriers. Delivery zones for the store come from Chris once the depot list is final.</li>
+        <li>One depot does not distribute 50 litre kegs. Another ships pallets only.</li>
+        <li>The store must not promise exact delivery dates. The business cannot guarantee them today. Use general wording in shipping text until Chris confirms.</li>
+        <li>Shipping confirmation emails are still an open question (open question 6).</li>
+      </ul>
 
       <h3>Checkout look</h3>
       <p>Apply the brand to the checkout page as far as the Grow plan allows (logo, colours). Checkout customisation is limited on Grow. If the Joane Engraved font or other brand items cannot be applied at checkout, document the limit and tell the project lead. Do not work around it with custom code.</p>
@@ -878,6 +909,67 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
           </ul>
         </div>
       </div>
+
+      <h3>Added after the 12 November call (to be scoped)</h3>
+      <div class="box box-warn"><p>Do not start these cards until Chris answers open questions 12 to 14. Scope each one and report the effort first.</p></div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.6</span>
+          <span class="milestone-name">Warehouse routing (scope first)</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Shikha told Chris that Shopify could assign each order to the right warehouse automatically. Confirm what is really possible before promising it.</li>
+            <li>Shopify built-in routing works by location priority, not by postcode zones. Zone rules may need n8n or an app. Report the options and effort.</li>
+            <li>Agree with the Workstream A developer who owns depot notification once an order is routed.</li>
+            <li>Acceptance: a written note of what Shopify can do on the current plan, the options, and a recommendation. Chris confirms whether it is in scope for Workstream B now or later.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.7</span>
+          <span class="milestone-name">Stock per location</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Map each depot to a Shopify location</li>
+            <li>Decide where the true stock number comes from. Stock per depot in Breww is not trusted today.</li>
+            <li>Check how stock shows per product and variation on the store, as Shikha said the team would check</li>
+            <li>Acceptance: a location list, the chosen stock source, and a test showing the same quantity in Shopify and the source</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.8</span>
+          <span class="milestone-name">Product list for launch</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Confirm with Chris which products and sizes appear on the trade store, including keg sizes and cans</li>
+            <li>Note which depots can ship which sizes (for example one depot does not ship 50 litre kegs)</li>
+            <li>Acceptance: Chris approves the product list and variations in writing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="milestone-card">
+        <div class="milestone-card-head">
+          <span class="milestone-id">B3.9</span>
+          <span class="milestone-name">Draft orders for email and WhatsApp customers</span>
+        </div>
+        <div class="milestone-card-body">
+          <ul>
+            <li>Some customers still order by email or WhatsApp. Staff may need to create these orders in Shopify admin as draft orders.</li>
+            <li>Confirm with Chris whether this is wanted, who does it, and how it should reach the usual order flow</li>
+            <li>Acceptance: Chris confirms yes or no. If yes, a draft order is created and reaches Breww correctly.</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <!-- Discovery Checklist -->
@@ -901,6 +993,9 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
           <tr><td>Can the theme menu hold links to podkovan.com (external links) for the logo and content items?</td><td>B1.7</td><td><span class="tag tag-validate">Validate</span></td></tr>
           <tr><td>How is the over-18 check built on the free theme (settings, small script or app)?</td><td>B1.8</td><td><span class="tag tag-validate">Validate — agree with project lead before building</span></td></tr>
           <tr><td>Can the stockist strip be built with theme settings alone?</td><td>B1.8</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Are payment terms for B2B companies available on the current plan, or only on Plus?</td><td>B1.5</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Can Shopify route an order to a location by postcode or delivery zone, or only by location priority?</td><td>B3.6</td><td><span class="tag tag-validate">Validate</span></td></tr>
+          <tr><td>Can staff create draft orders for B2B companies and have them reach Breww?</td><td>B3.9</td><td><span class="tag tag-validate">Validate</span></td></tr>
           <tr><td>How much of the brand can be applied to the checkout page on Grow?</td><td>B2</td><td><span class="tag tag-validate">Validate</span></td></tr>
           <tr><td>With login required, can a visitor still reach the content links back to podkovan.com?</td><td>B1.2, B1.7</td><td><span class="tag tag-validate">Validate</span></td></tr>
         </tbody>
@@ -929,6 +1024,10 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
           <tr><td>9</td><td>Final trade terms text for the announcement bar (brand brief wording used as placeholder)</td><td>B1.7</td><td><span class="tag tag-open">Chris to send later</span></td></tr>
           <tr><td>10</td><td>Exact podkovan.com page for the About menu item (Our story?) and exact addresses for each linked page</td><td>B1.7</td><td><span class="tag tag-open">Open</span></td></tr>
           <tr><td>11</td><td>Domain: Chris connects trade.podkovan.com himself. Agree when the store is ready for him to do it.</td><td>B3</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>12</td><td>Are warehouse routing and stock sync part of Workstream B now, or a later phase?</td><td>B3.6, B3.7</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>13</td><td>Should some trade customers be allowed to pay later, or is it prepay only for now?</td><td>B1.5, B2</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>14</td><td>Which products and sizes should the trade store show at launch?</td><td>B3.8</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr><td>15</td><td>Do you want sample requests (a sample box choice and a lead source field) inside the trade form? Handled by Workstream A.</td><td>Trade form</td><td><span class="tag tag-open">Open</span></td></tr>
         </tbody>
       </table></div>
     </section>
@@ -956,6 +1055,8 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
         <li><strong>Stripe or GoCardless payment setup</strong> — these run via Xero, not Shopify</li>
         <li><strong>n8n workflows</strong> — coordinate with Workstream A developer for all n8n logic</li>
         <li><strong>Depot notification logic</strong> — handled entirely by Workstream A</li>
+        <li><strong>Automatic warehouse routing and stock sync</strong> — not started until Chris confirms scope (open question 12). See B3.6 and B3.7.</li>
+        <li><strong>Promising exact delivery dates</strong> — the store gives general delivery wording only</li>
       </ul>
     </section>
 
@@ -975,6 +1076,7 @@ Task: [describe the specific Shopify task you need help with — e.g. "Set up Mi
         <tbody>
           <tr><td>Shopify store admin access</td><td>Chris</td><td>Chris grants collaborator access to LN Webworks account</td></tr>
           <tr><td>Breww admin access (for integration setup)</td><td>Chris</td><td>Read-only access sufficient for integration configuration review</td></tr>
+          <tr><td>Review login for the current trade store and Breww</td><td>Chris</td><td>Chris will create logins for the LN Webworks team so they can review the current trade store. Waiting for Chris.</td></tr>
           <tr><td>Brand brief</td><td>Chris</td><td>Received. Use this version only.</td></tr>
           <tr><td>Joane Engraved font files</td><td>Chris</td><td>Licensed. Chris will send the files. Use only for the Podkovan stores.</td></tr>
           <tr><td>Domain (trade.podkovan.com)</td><td>Chris</td><td>Chris connects it in Shopify himself. No DNS access needed.</td></tr>
